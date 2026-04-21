@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import styles from './css/Header.module.css'; // Importem els estils com un objecte
 
 const Header = () => {
-  // Definim les pestanyes disponibles
-  const tabs = ['HALL', 'STUDY', 'RELAX'];
+
+  // WE set here the 3 view we want to do
+  const tabs = ['STUDY', 'HALL', 'RELAX'];
 
   // Estat per saber quina pestanya està seleccionada (comencem per la primera)
   const [activeTab, setActiveTab] = useState('HALL');
@@ -11,7 +12,7 @@ const Header = () => {
   return (
     <header className={styles.header}>
       <div className={styles.logo}>
-        🚀 AppProd
+        ClearMind
       </div>
       
       <nav className={styles.nav}>
