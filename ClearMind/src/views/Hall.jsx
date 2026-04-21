@@ -16,9 +16,9 @@ function App() {
           <img src={viteLogo} className="vite" alt="Vite logo" />
         </div>
         <div>
-          <h1>Get started</h1>
+          <h1>Get started - Dev Branch</h1>
           <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+            This Braanch is setted to be the core of new utilities
           </p>
         </div>
         <button
