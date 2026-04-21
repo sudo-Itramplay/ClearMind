@@ -1,0 +1,15 @@
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  margin-top: auto; /* Això ajuda a empènyer el footer al final si fas servir flex en el layout */
+  border-top: 1px solid #eaeaea; /* Línia divisòria molt suau */
+  background-color: #fafafa;
+}
+
+.footer p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #888;
+}

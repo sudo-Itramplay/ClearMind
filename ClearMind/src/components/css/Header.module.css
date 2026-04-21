@@ -1,0 +1,66 @@
+.header {
+  display: flex;
+  justify-content: space-between; /* Logo a l'esquerra, nav al centre, spacer a la dreta */
+  align-items: center;
+  padding: 0 2rem;
+  height: 70px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Una petita ombra inferior */
+  position: sticky; /* Queda fix a dalt en fer scroll */
+  top: 0;
+  z-index: 1000;
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333;
+  flex: 1; /* Ocupa espai a l'esquerra */
+}
+
+.nav {
+  flex: 2; /* Ocupa més espai central per assegurar el centrat */
+  display: flex;
+  justify-content: center; /* Centra la llista de pestanyes */
+}
+
+.tabList {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 1rem; /* Espai entre pestanyes */
+}
+
+.tabItem {
+  display: flex;
+}
+
+.tabButton {
+  background: none;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #666; /* Color per defecte (no seleccionat) */
+  cursor: pointer;
+  transition: all 0.3s ease; /* Animació suau del canvi de color */
+  border-radius: 20px; /* Bordes arrodonits */
+}
+
+/* Estil quan passem el ratolí per sobre (hover) */
+.tabButton:hover:not(.active) {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+/* --- L'ESTIL PER A LA PESTANYA SELECCIONADA --- */
+.tabButton.active {
+  background-color: #007bff; /* Blau corporatiu */
+  color: #ffffff; /* Text blanc per a contrast */
+  font-weight: 600;
+}
+
+.spacer {
+  flex: 1; /* Ocupa espai a la dreta per equilibrar el logo */
+}
