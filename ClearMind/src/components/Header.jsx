@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import styles from './css/Header.module.css'; // Importem els estils com un objecte
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import styles from './css/Header.module.css';
 
 const Header = () => {
-
-  // WE set here the 3 view we want to do
-  const tabs = ['STUDY', 'HALL', 'RELAX'];
-
-  // Estat per saber quina pestanya està seleccionada (comencem per la primera)
-  const [activeTab, setActiveTab] = useState('HALL');
+  // Ara relacionem cada concepte amb el seu path corresponent
+  const tabs = [
+    { name: 'STUDY', path: '/study' },
+    { name: 'HALL', path: '/' },
+    { name: 'RELAX', path: '/relax' }
+  ];
 
   return (
     <header className={styles.header}>
@@ -18,20 +19,21 @@ const Header = () => {
       <nav className={styles.nav}>
         <ul className={styles.tabList}>
           {tabs.map((tab) => (
-            <li key={tab} className={styles.tabItem}>
-              <button
-                // Si la pestanya es l'activa, afegim la classe 'active'
-                className={`${styles.tabButton} ${activeTab === tab ? styles.active : ''}`}
-                onClick={() => setActiveTab(tab)} // Canviem l'estat en fer clic
+            <li key={tab.name} className={styles.tabItem}>
+              <NavLink
+                to={tab.path}
+                // NavLink ofereix un estat 'isActive' que passem a la funció de classes
+                className={({ isActive }) => 
+                  `${styles.tabButton} ${isActive ? styles.active : ''}`
+                }
               >
-                {tab}
-              </button>
+                {tab.name}
+              </NavLink>
             </li>
           ))}
         </ul>
       </nav>
       
-      {/* Espaiador per equilibrar el flexbox del header (opcional) */}
       <div className={styles.spacer}></div>
     </header>
   );

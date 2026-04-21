@@ -11,8 +11,7 @@ const FOOTER_DATA = {
   social: [
     { label: 'GitHub', url: 'https://github.com/vitejs/vite' },
     { label: 'Discord', url: 'https://chat.vite.dev/' },
-    { label: 'X.com', url: 'https://x.com/vite_js' },
-    { label: 'Bluesky', url: 'https://bsky.app/profile/vite.dev' }
+    { label: 'X.com', url: 'https://x.com/vite_js' }
   ]
 };
 
