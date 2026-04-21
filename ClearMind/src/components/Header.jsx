@@ -3,10 +3,9 @@ import { NavLink } from 'react-router-dom';
 import styles from './css/Header.module.css';
 
 const Header = () => {
-  // Ara relacionem cada concepte amb el seu path corresponent
   const tabs = [
     { name: 'STUDY', path: '/study' },
-    { name: 'HALL', path: '/' },
+    { name: 'HALL', path: '/hall' },
     { name: 'RELAX', path: '/relax' }
   ];
 
