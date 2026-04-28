@@ -3,9 +3,42 @@ import './css/Relax.css';
 import buddhImage from '../images/cute-buddha-in-prayer-pose-2d-flat-cartoon-illustration-free-vector.jpg';
 
 const meditationGuides = [
-  { id: 'm1', title: 'Respiració Conscient', description: '5 minuts de respiració guiada per calmar la ment.' },
-  { id: 'm2', title: 'Escaneig Corporal', description: '10 minuts per notar tensions i relaxar el cos.' },
-  { id: 'm3', title: 'Visualització', description: '8 minuts de visualització guiada per centrar-te.' }
+  {
+    id: 'm1',
+    title: 'Respiració Conscient',
+    description: '5 minuts de respiració guiada per calmar la ment i reduir l\'estrès.',
+    steps: [
+      'Seu amb l\'esquena recta i relaxa les espatlles.',
+      'Tanca els ulls i inspira lentament pel nas durant 4 segons.',
+      'Mantén l\'aire 2 segons sense forçar.',
+      'Expira suaument per la boca durant 6 segons.',
+      'Repeteix el cicle durant 5 minuts, tornant a la respiració quan et distreguis.'
+    ]
+  },
+  {
+    id: 'm2',
+    title: 'Escaneig Corporal',
+    description: '10 minuts per detectar tensions i relaxar cada zona del cos.',
+    steps: [
+      'Estira\'t o seu còmodament i tanca els ulls.',
+      'Porta l\'atenció als peus i observa sensacions sense jutjar.',
+      'Puja lentament per cames, abdomen, pit i esquena.',
+      'Quan notis tensió, inspira profund i expira relaxant aquella zona.',
+      'Acaba amb 3 respiracions profundes i obre els ulls a poc a poc.'
+    ]
+  },
+  {
+    id: 'm3',
+    title: 'Visualització',
+    description: '8 minuts de visualització guiada per centrar-te i recuperar calma.',
+    steps: [
+      'Seu en silenci i respira profundament durant 1 minut.',
+      'Imagina un lloc segur i tranquil (platja, bosc o muntanya).',
+      'Afegeix detalls: sons, colors, temperatura i textures.',
+      'Visualitza que amb cada exhalació alliberes preocupacions.',
+      'Mantén aquesta imatge 5 minuts i torna gradualment al present.'
+    ]
+  }
 ];
 
 const Relax = () => {
@@ -67,7 +100,19 @@ const Relax = () => {
             <p style={{ color: '#718096' }}>Tria una guia per començar:</p>
             <div className="guides-list">
               {meditationGuides.map((g) => (
-                <div key={g.id} className={`guide-item ${selectedGuide?.id === g.id ? 'active' : ''}`}>
+                <div
+                  key={g.id}
+                  className={`guide-item ${selectedGuide?.id === g.id ? 'active' : ''}`}
+                  onClick={() => startGuide(g)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      startGuide(g);
+                    }
+                  }}
+                >
                   <div className="guide-info">
                     <div className="guide-title">{g.title}</div>
                     <div className="guide-desc">{g.description}</div>
@@ -80,9 +125,17 @@ const Relax = () => {
             </div>
 
             {selectedGuide && (
-              <div style={{ marginTop: 16 }}>
-                <div style={{ color: '#2C3E50', fontWeight: '700' }}>Activa: {selectedGuide.title}</div>
-                <p style={{ color: '#667085' }}>{selectedGuide.description}</p>
+              <div className="guide-detail">
+                <div className="guide-detail-title">Activa: {selectedGuide.title}</div>
+                <p className="guide-detail-desc">{selectedGuide.description}</p>
+
+                <div className="guide-steps-title">Pas a pas</div>
+                <ol className="guide-steps-list">
+                  {selectedGuide.steps.map((step, index) => (
+                    <li key={`${selectedGuide.id}-step-${index}`}>{step}</li>
+                  ))}
+                </ol>
+
                 <div className="btn-group">
                   <button className="btn btn-primary" onClick={() => alert(`Iniciant ${selectedGuide.title}`)}>Iniciar</button>
                   <button className="btn btn-secondary" onClick={() => setSelectedGuide(null)}>Cancelar</button>
