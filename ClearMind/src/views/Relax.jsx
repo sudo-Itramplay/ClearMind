@@ -1,151 +1,128 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './css/Relax.css';
-import buddhImage from '../images/cute-buddha-in-prayer-pose-2d-flat-cartoon-illustration-free-vector.jpg';
 
 const meditationGuides = [
   {
     id: 'm1',
     title: 'Respiració Conscient',
-    description: '5 minuts de respiració guiada per calmar la ment i reduir l\'estrès.',
+    description: '5 minuts de respiració guiada per calmar la ment.',
     steps: [
-      'Seu amb l\'esquena recta i relaxa les espatlles.',
-      'Tanca els ulls i inspira lentament pel nas durant 4 segons.',
-      'Mantén l\'aire 2 segons sense forçar.',
-      'Expira suaument per la boca durant 6 segons.',
-      'Repeteix el cicle durant 5 minuts, tornant a la respiració quan et distreguis.'
+      'Seu amb l\'esquena recta.',
+      'Inspira pel nas (4s).',
+      'Mantén l\'aire (2s).',
+      'Expira per la boca (6s).',
+      'Repeteix el cicle.'
     ]
   },
   {
     id: 'm2',
     title: 'Escaneig Corporal',
-    description: '10 minuts per detectar tensions i relaxar cada zona del cos.',
+    description: '10 minuts per relaxar cada zona del cos.',
     steps: [
-      'Estira\'t o seu còmodament i tanca els ulls.',
-      'Porta l\'atenció als peus i observa sensacions sense jutjar.',
-      'Puja lentament per cames, abdomen, pit i esquena.',
-      'Quan notis tensió, inspira profund i expira relaxant aquella zona.',
-      'Acaba amb 3 respiracions profundes i obre els ulls a poc a poc.'
+      'Tanca els ulls.',
+      'Atenció als peus.',
+      'Puja per les cames.',
+      'Relaxa abdomen i pit.',
+      'Relaxa espatlles i cara.'
     ]
   },
   {
     id: 'm3',
     title: 'Visualització',
-    description: '8 minuts de visualització guiada per centrar-te i recuperar calma.',
+    description: '8 minuts per recuperar la calma.',
     steps: [
-      'Seu en silenci i respira profundament durant 1 minut.',
-      'Imagina un lloc segur i tranquil (platja, bosc o muntanya).',
-      'Afegeix detalls: sons, colors, temperatura i textures.',
-      'Visualitza que amb cada exhalació alliberes preocupacions.',
-      'Mantén aquesta imatge 5 minuts i torna gradualment al present.'
+      'Imagina un lloc segur.',
+      'Afegeix-hi sons i colors.',
+      'Sente\'t protegit.',
+      'Allibera preocupacions.',
+      'Torna al present.'
     ]
   }
 ];
 
 const Relax = () => {
-  const [isGuidesOpen, setIsGuidesOpen] = useState(false);
   const [selectedGuide, setSelectedGuide] = useState(null);
+  const [isBreathing, setIsBreathing] = useState(false);
+  const [breathStage, setBreathStage] = useState('Inspirar'); // Inspirar, Mantenir, Expirar
 
-  const openGuides = () => setIsGuidesOpen(true);
-  const closeGuides = () => {
-    setIsGuidesOpen(false);
-    setSelectedGuide(null);
-  };
-
-  const startGuide = (guide) => {
-    setSelectedGuide(guide);
-    // Aquí podríamos iniciar un temporitzador o redirigir a la sessió
-  };
+  // Lògica simple per la respiració
+  useEffect(() => {
+    let timer;
+    if (isBreathing) {
+      if (breathStage === 'Inspirar') {
+        timer = setTimeout(() => setBreathStage('Mantenir'), 4000);
+      } else if (breathStage === 'Mantenir') {
+        timer = setTimeout(() => setBreathStage('Expirar'), 2000);
+      } else {
+        timer = setTimeout(() => setBreathStage('Inspirar'), 6000);
+      }
+    }
+    return () => clearTimeout(timer);
+  }, [isBreathing, breathStage]);
 
   return (
-    <section className="relax-root">
-      <header className="relax-header">
-        <h1>El Refugi — Benestar</h1>
-        <p>Espai per desconnexió i meditació</p>
-      </header>
-
-      <main className="relax-main">
-        <div className="room-left">
-          <p>Zona d'activitats suaus.</p>
-        </div>
-
-        <div className="room-right" aria-label="Habitació de Benestar">
-          <div className="cushions-ellipse">
-            {/* Buda grande en el centro */}
-            <button
-              className="buddha-button"
-              onClick={openGuides}
-              aria-label="Buda i guies de meditació"
-            >
-              <img src={buddhImage} alt="Buda meditando" className="buddha-figure-large" />
-            </button>
-
-            {/* Generem 6 coixins al voltant d'una elipse */}
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className={`cushion cushion-${i + 3}`}
-              />
+    <div className="relax-container">
+      <section className="relax-layout">
+        
+        {/* COLUMNA ESQUERRA: GUIES */}
+        <div className="relax-panel guides-panel">
+          <div className="panel-header">
+            <h2>GUIES</h2>
+          </div>
+          <div className="guides-list-container">
+            {meditationGuides.map(guide => (
+              <button 
+                key={guide.id} 
+                className={`guide-btn ${selectedGuide?.id === guide.id ? 'active' : ''}`}
+                onClick={() => setSelectedGuide(guide)}
+              >
+                {guide.title}
+              </button>
             ))}
-
-            <div className="rug" />
           </div>
-        </div>
-      </main>
-
-      {isGuidesOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content" style={{ maxWidth: '480px' }}>
-            <button className="modal-close" onClick={closeGuides}>✕</button>
-            <h2 className="modal-title">Guies de Meditació</h2>
-            <p style={{ color: '#718096' }}>Tria una guia per començar:</p>
-            <div className="guides-list">
-              {meditationGuides.map((g) => (
-                <div
-                  key={g.id}
-                  className={`guide-item ${selectedGuide?.id === g.id ? 'active' : ''}`}
-                  onClick={() => startGuide(g)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      startGuide(g);
-                    }
-                  }}
-                >
-                  <div className="guide-info">
-                    <div className="guide-title">{g.title}</div>
-                    <div className="guide-desc">{g.description}</div>
-                  </div>
-                  <div className="guide-actions">
-                    <button className="btn btn-secondary" onClick={() => startGuide(g)}>Seleccionar</button>
-                  </div>
-                </div>
-              ))}
+          {selectedGuide && (
+            <div className="guide-details-box">
+              <h3>{selectedGuide.title}</h3>
+              <ol>
+                {selectedGuide.steps.map((s, i) => <li key={i}>{s}</li>)}
+              </ol>
             </div>
+          )}
+        </div>
 
-            {selectedGuide && (
-              <div className="guide-detail">
-                <div className="guide-detail-title">Activa: {selectedGuide.title}</div>
-                <p className="guide-detail-desc">{selectedGuide.description}</p>
+        {/* CENTRE: RESPIRACIÓ (CERCLE ANIMAT) */}
+        <div className="relax-center">
+          <div 
+            className={`breathing-circle ${isBreathing ? breathStage.toLowerCase() : ''}`}
+            onClick={() => {
+              setIsBreathing(!isBreathing);
+              setBreathStage('Inspirar');
+            }}
+          >
+            <span className="breath-text">
+              {isBreathing ? breathStage : 'COMENÇAR'}
+            </span>
+          </div>
+          <p className="relax-hint">
+            {isBreathing ? 'Segueix el ritme del cercle' : 'Clica el cercle per respirar'}
+          </p>
+        </div>
 
-                <div className="guide-steps-title">Pas a pas</div>
-                <ol className="guide-steps-list">
-                  {selectedGuide.steps.map((step, index) => (
-                    <li key={`${selectedGuide.id}-step-${index}`}>{step}</li>
-                  ))}
-                </ol>
-
-                <div className="btn-group">
-                  <button className="btn btn-primary" onClick={() => alert(`Iniciant ${selectedGuide.title}`)}>Iniciar</button>
-                  <button className="btn btn-secondary" onClick={() => setSelectedGuide(null)}>Cancelar</button>
-                </div>
-              </div>
-            )}
+        {/* COLUMNA DRETA: CONSELLS / INFO */}
+        <div className="relax-panel tips-panel">
+          <div className="panel-header">
+            <h2>RECORDA</h2>
+          </div>
+          <div className="tips-content">
+            <div className="tip-card">Redueix distraccions.</div>
+            <div className="tip-card">Troba un lloc còmode.</div>
+            <div className="tip-card">No et jutgis si et distreus.</div>
+            <div className="tip-card">Torna a la respiració.</div>
           </div>
         </div>
-      )}
-    </section>
+
+      </section>
+    </div>
   );
 };
 

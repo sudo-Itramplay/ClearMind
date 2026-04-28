@@ -25,7 +25,7 @@ function Hall() {
         <div className="calendar-board">
           <h2>CALENDARI / TODOS</h2>
           <ul className="todo-list">
-            {todos.map(todo => (
+            {[...todos].sort((a, b) => a.completed - b.completed).map(todo => (
               <li key={todo.id} className={todo.completed ? 'done' : ''}>
                 {todo.task}
               </li>

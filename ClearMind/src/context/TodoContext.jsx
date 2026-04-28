@@ -17,7 +17,16 @@ export const TodoProvider = ({ children }) => {
   }, []); // L'array buit vol dir que només s'executa un cop al principi
 
   return (
-    <TodoContext.Provider value={{ todos, setTodos, isLoading }}>
+    <TodoContext.Provider value={{ 
+      todos, 
+      setTodos, 
+      isLoading,
+      addTodo: (newTodo) => setTodos(prev => [...prev, newTodo]),
+      deleteTodo: (id) => setTodos(prev => prev.filter(t => t.id !== id)),
+      toggleTodo: (id) => setTodos(prev => prev.map(t => 
+        t.id === id ? { ...t, completed: !t.completed } : t
+      ))
+    }}>
       {children}
     </TodoContext.Provider>
   );
