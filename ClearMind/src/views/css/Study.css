@@ -1,302 +1,1385 @@
-.study-container {
+/* ============================================================
+   Study.css — Vista d'Estudi: escriptori de fusta
+   Sistema de disseny ClearMind — variables de globals.css
+   Inclou: tauler de suro, notes adhesives, llibreta, temporitzador
+   ============================================================ */
+
+/* ── Superfície de l'escriptori — fons fosc de fusta ────── */
+.study-desk {
+  min-height: calc(100vh - 56px);
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 80vh;
-  padding: 20px;
-  background: var(--bg);
+  padding: 24px 20px 80px; /* Espai per a la nav inferior en mòbil */
+
+  /* Fusta de cafè: gra fi + gradient base + vinyeta */
+  background:
+    /* Gra de fusta horitzontal — llistons subtils */
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 58px,
+      rgba(58, 39, 26, 0.12) 58px,
+      rgba(58, 39, 26, 0.12) 60px
+    ),
+    /* Fibres verticals subtils */
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 28px,
+      rgba(26, 18, 8, 0.06) 28px,
+      rgba(26, 18, 8, 0.06) 29px
+    ),
+    /* Base de fusta de cafè càlida */
+    linear-gradient(160deg, #1A1208 0%, #120D05 60%, #0D0A04 100%);
 }
 
+/* Vinyeta d'ambient lluminós — llum des de dalt-esquerra */
+.study-desk::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 80% 60% at 20% 10%,
+    rgba(174, 130, 4, 0.06),
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Disposició principal de l'escriptori ───────────────── */
 .study-layout {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 240px 1fr 280px;
+  grid-template-rows: auto auto;
+  gap: 20px;
+  max-width: 1280px;
   width: 100%;
-  max-width: 1200px;
-  gap: 40px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
-/* PANELS (TASQUES & ÀUDIO) */
-.study-panel {
-  flex: 1;
-  height: 400px;
-  background: white;
-  border: 4px solid var(--border);
-  border-radius: 10px;
-  padding: 20px;
+/* ── Columna esquerra: Llibreta + Ràdio ─────────────────── */
+.study-left-col {
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow);
+  gap: 16px;
+  grid-column: 1;
 }
 
-.panel-header {
+/* ── Centre: Tauler de suro ─────────────────────────────── */
+.corkboard-wrapper {
+  grid-column: 2;
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Dreta: Temporitzador ───────────────────────────────── */
+.desk-timer-wrapper {
+  grid-column: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   TAULER DE SURO (CorkBoard)
+   Superfície de suro amb marc de fusta i textura granular.
+   ════════════════════════════════════════════════════════════ */
+
+/* Capçalera del tauler */
+.corkboard-header {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px solid var(--border);
-  margin-bottom: 15px;
-  padding-bottom: 10px;
+  padding: 0 4px;
 }
 
-.panel-header h2 {
-  font-size: 1.2rem;
+.corkboard-title {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--wood-light);
   margin: 0;
-  color: var(--text-h);
+  opacity: 0.8;
 }
 
-/* TASKS LIST */
-.tasks-list-container {
-  flex: 1;
-  overflow-y: auto;
-}
-
-.simple-task-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.simple-task-list li {
-  padding: 12px;
-  border: 2px solid var(--border);
-  margin-bottom: 8px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: var(--code-bg);
-  font-weight: 500;
-  color: var(--text);
-}
-
-.simple-task-list li.done {
-  text-decoration: line-through;
-  opacity: 0.6;
-}
-
-.simple-modal h3.done {
-  text-decoration: line-through;
-  opacity: 0.6;
-}
-
-.add-btn {
-  background: var(--accent);
-  color: #fff; /* White is fine here as background is dark purple */
-  border: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  font-size: 20px;
-  cursor: pointer;
+.corkboard-progress {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-weight: bold;
+  gap: 8px;
 }
 
-/* CENTER TIMER */
-.study-center {
-  flex: 1.5;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 30px;
+.corkboard-count {
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  color: var(--wood-light);
+  opacity: 0.7;
 }
 
-.timer-circle {
-  width: 250px;
-  height: 250px;
-  border-radius: 50%;
-  border: 10px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.3s;
-  background: var(--bg);
-  box-shadow: var(--shadow);
+.corkboard-progress-bar {
+  width: 80px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
 }
 
-.timer-circle.active {
-  border-color: var(--accent);
-  transform: scale(1.05);
+.corkboard-progress-fill {
+  height: 100%;
+  background: var(--accent-calm-light);
+  border-radius: 2px;
+  transition: width 400ms ease-out;
 }
 
-.timer-val {
-  font-size: 3.5rem;
-  font-weight: 800;
-  color: var(--text-h);
-  font-family: monospace;
+/* Superfície de suro */
+.corkboard-surface {
+  border-radius: 12px;
+  border: 10px solid var(--wood-dark);
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+  min-height: 420px;
+
+  /* Textura de suro via gradients superposats */
+  background:
+    /* Gra diagonal del suro */
+    repeating-linear-gradient(
+      128deg,
+      transparent 0px,
+      transparent 5px,
+      rgba(58, 39, 26, 0.08) 5px,
+      rgba(58, 39, 26, 0.08) 6px
+    ),
+    repeating-linear-gradient(
+      52deg,
+      transparent 0px,
+      transparent 4px,
+      rgba(58, 39, 26, 0.05) 4px,
+      rgba(58, 39, 26, 0.05) 5px
+    ),
+    /* Color base del suro */
+    radial-gradient(ellipse at 30% 40%, #D4A560 0%, #C4944A 45%, #A87A30 100%);
+
+  box-shadow:
+    inset 0 0 40px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-.timer-label {
-  font-size: 0.9rem;
-  font-weight: bold;
-  letter-spacing: 2px;
-  color: var(--accent);
+/* Textura de soroll sobre el suro */
+.corkboard-texture {
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='150' height='150' filter='url(%23n)' opacity='0.07'/></svg>");
+  background-repeat: repeat;
+  background-size: 150px 150px;
+  pointer-events: none;
+  z-index: 0;
 }
 
-.timer-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-}
-
-.timer-actions button {
-  background: var(--code-bg);
-  border: 2px solid var(--border);
-  padding: 8px 20px;
-  border-radius: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: var(--text);
-}
-
-.timer-actions button:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.timer-settings {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: bold;
-  color: var(--text);
-}
-
-.timer-settings input {
-  width: 60px;
-  padding: 5px;
-  border: 2px solid var(--border);
-  border-radius: 5px;
+.corkboard-loading,
+.corkboard-empty {
+  font-family: 'Courier New', monospace;
+  font-size: 0.82rem;
+  color: var(--wood-dark);
   text-align: center;
-  font-size: 1rem;
-  background: var(--bg);
-  color: var(--text-h);
+  padding: 32px;
+  opacity: 0.7;
 }
 
-/* AUDIO PANEL */
-.audio-options {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+/* ── Grid de notes adhesives ─────────────────────────────── */
+.postits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  position: relative;
+  z-index: 1;
 }
 
-.audio-btn {
-  padding: 15px;
-  border: 2px solid var(--border);
-  background: var(--code-bg);
-  border-radius: 8px;
+/* ── Nota adhesiva (post-it) ────────────────────────────── */
+.postit-note {
+  position: relative;
+  padding: 24px 10px 12px;
+  border-radius: 2px;
   cursor: pointer;
-  text-align: left;
-  font-weight: bold;
-  transition: all 0.2s;
-  color: var(--text);
-}
-
-.audio-btn.active {
-  border-color: var(--accent);
-  background: var(--accent-bg);
-  color: var(--accent);
-}
-
-.volume-slider-container {
-  margin-top: 20px;
+  transition:
+    box-shadow 200ms ease,
+    transform 150ms ease,
+    opacity 200ms ease;
+  box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.20), 1px 1px 3px rgba(0, 0, 0, 0.12);
+  min-height: 90px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  font-weight: bold;
-  color: var(--text);
+  gap: 6px;
+  /* Touch target mínim */
+  min-height: 80px;
 }
 
-/* MODALS */
-.simple-modal-overlay {
+/* Colors de les notes adhesives — cicle de 4 via classe de React */
+.postit-1 { background: #FEF3C7; }
+.postit-2 { background: #FCE7F3; }
+.postit-3 { background: #D1FAE5; }
+.postit-4 { background: #DBEAFE; }
+
+/* Rotacions deterministes via classe */
+.postit-1 { transform: rotate(-2deg); }
+.postit-2 { transform: rotate(2.5deg); }
+.postit-3 { transform: rotate(-1.5deg); }
+.postit-4 { transform: rotate(1.8deg); }
+
+/* Hover: s'alça del tauler */
+.postit-note:hover {
+  box-shadow: 4px 6px 16px rgba(0, 0, 0, 0.28), 2px 2px 6px rgba(0, 0, 0, 0.15);
+  transform: rotate(0deg) translateY(-3px) !important;
+  z-index: 10;
+}
+
+/* Focus visible — clau per a accessibilitat */
+.postit-note:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+  transform: rotate(0deg) translateY(-2px) !important;
+  z-index: 10;
+}
+
+/* Nota completada */
+.postit-note.postit-completed {
+  opacity: 0.55;
+  transform: scale(0.97) !important;
+}
+.postit-note.postit-completed:hover {
+  opacity: 0.70;
+  transform: scale(0.97) !important;
+}
+
+/* ── Cinta adhesiva (tape) — decorativa ─────────────────── */
+.postit-tape {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2.5deg);
+  display: block;
+  width: 40px;
+  height: 13px;
+  background: rgba(255, 255, 255, 0.42);
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ── Casella de verificació visual ──────────────────────── */
+.postit-checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 2px solid rgba(58, 39, 26, 0.35);
+  background: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+  align-self: flex-start;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.postit-checkbox-checked {
+  background: var(--accent-calm);
+  border-color: var(--accent-calm);
+}
+
+.postit-checkmark {
+  font-size: 0.65rem;
+  color: #fff;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ── Text de la tasca ───────────────────────────────────── */
+.postit-text {
+  font-family: 'Segoe Print', 'Comic Sans MS', cursive, system-ui;
+  font-size: 0.82rem;
+  color: #2D1A0A; /* Contrast ≥ 4.5:1 contra tots els fons de post-it */
+  line-height: 1.35;
+  word-break: break-word;
+  flex: 1;
+}
+
+.postit-note.postit-completed .postit-text {
+  text-decoration: line-through;
+  color: rgba(45, 26, 10, 0.55);
+}
+
+/* ── Descripció de la tasca ─────────────────────────────── */
+.postit-desc {
+  font-family: 'Segoe Print', 'Comic Sans MS', cursive, system-ui;
+  font-size: 0.68rem;
+  color: rgba(45, 26, 10, 0.60);
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* ── Post-it d'afegir nova tasca ─────────────────────────── */
+.postit-add {
+  width: 100%;
+  min-height: 80px;
+  border: 2px dashed rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+  padding: 12px;
+}
+
+.postit-add:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.postit-add:focus-visible {
+  outline: 2px solid var(--accent-warm-light);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.postit-add-icon {
+  font-size: 1.4rem;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.postit-add-text {
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ════════════════════════════════════════════════════════════
+   MODAL D'AFEGIR TASCA
+   Estètica de quadern amb línies pautades i marge vermell.
+   ════════════════════════════════════════════════════════════ */
+
+.modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.75);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 100;
-  backdrop-filter: blur(2px);
+  justify-content: center;
+  z-index: 200;
+  backdrop-filter: blur(4px);
+  padding: 16px;
 }
 
-.simple-modal {
-  background: var(--bg);
-  border: 4px solid var(--border);
-  border-radius: 10px;
-  padding: 30px;
+.task-modal {
+  position: relative;
+  background: var(--surface-light);
+  border-radius: 12px;
+  max-width: 420px;
   width: 100%;
-  max-width: 400px;
-  box-shadow: var(--shadow);
-  color: var(--text);
+  padding: 32px 28px 28px 52px; /* Espai per al marge vermell */
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.45),
+    0 4px 16px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
 }
 
-.simple-modal h3 {
-  margin-top: 0;
-  border-bottom: 2px solid var(--border);
-  padding-bottom: 10px;
-  color: var(--text-h);
+/* Línies pautades del quadern */
+.modal-notebook-lines {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    transparent 0px,
+    transparent 27px,
+    rgba(180, 210, 255, 0.3) 27px,
+    rgba(180, 210, 255, 0.3) 28px
+  );
+  background-size: 100% 28px;
+  background-position: 0 32px;
+  pointer-events: none;
+  z-index: 0;
 }
 
-.simple-modal form {
+/* Línia de marge vermella */
+.modal-margin-line {
+  position: absolute;
+  top: 0;
+  left: 40px;
+  bottom: 0;
+  width: 2px;
+  background: rgba(199, 13, 11, 0.3);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Tot el contingut del modal per sobre de les línies */
+.task-modal > * {
+  position: relative;
+  z-index: 1;
+}
+
+.modal-title {
+  font-family: 'Segoe Print', 'Comic Sans MS', cursive, system-ui;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 20px;
+}
+
+.modal-field {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 4px;
+  margin-bottom: 14px;
 }
 
-.simple-modal input, .simple-modal textarea {
-  padding: 10px;
-  border: 2px solid var(--border);
-  border-radius: 5px;
-  font-family: inherit;
-  background: var(--bg);
-  color: var(--text-h);
+.modal-label {
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
 }
 
-.modal-btns {
+.modal-input,
+.modal-textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--border-default);
+  font-family: 'Segoe Print', 'Comic Sans MS', cursive, system-ui;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  padding: 6px 0;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 150ms ease;
+  resize: vertical;
+  line-height: 28px; /* Alinea amb les línies del quadern */
+}
+
+.modal-input:focus,
+.modal-textarea:focus {
+  border-bottom-color: var(--accent-primary);
+}
+
+.modal-input[aria-invalid="true"] {
+  border-bottom-color: var(--accent-critical);
+}
+
+.modal-error {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.75rem;
+  color: var(--accent-critical);
+  font-weight: 500;
+}
+
+.modal-actions {
   display: flex;
   gap: 10px;
   margin-top: 20px;
 }
 
-.modal-btns button {
+.modal-btn-cancel,
+.modal-btn-submit {
   flex: 1;
-  padding: 10px;
-  border: 2px solid var(--border);
-  background: var(--code-bg);
-  border-radius: 5px;
-  font-weight: bold;
+  padding: 10px 16px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
   cursor: pointer;
-  color: var(--text);
+  border-radius: 8px;
+  min-height: 44px; /* Touch target */
+  transition: background 150ms ease, box-shadow 150ms ease;
 }
 
-.modal-btns button.primary {
-  background: var(--accent);
-  color: #fff; /* Readable white on purple background */
-  border-color: var(--accent);
+.modal-btn-cancel {
+  background: var(--surface-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+}
+.modal-btn-cancel:hover { background: var(--border-soft); }
+
+.modal-btn-submit {
+  background: var(--accent-primary);
+  color: #fff;
+  border: 1px solid transparent;
+  box-shadow: 0 2px 6px rgba(174, 88, 21, 0.3);
+}
+.modal-btn-submit:hover {
+  background: var(--accent-primary-light);
+  box-shadow: 0 4px 12px rgba(174, 88, 21, 0.4);
 }
 
+.modal-btn-cancel:focus-visible,
+.modal-btn-submit:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
 
-.empty-msg {
-  text-align: center;
-  color: var(--border);
-  margin-top: 40px;
+/* ════════════════════════════════════════════════════════════
+   LLIBRETA (DeskNotebook)
+   Full de quadern amb línies, marge vermell i enquadernació.
+   ════════════════════════════════════════════════════════════ */
+
+.desk-notebook-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.desk-notebook {
+  background: var(--surface-light);
+  border-radius: 8px;
+  border: 1px solid var(--border-default);
+  box-shadow: 0 3px 12px rgba(58, 39, 26, 0.18), 0 1px 4px rgba(58, 39, 26, 0.10);
+  overflow: hidden;
+  position: relative;
+  transition: box-shadow 200ms ease;
+}
+
+.desk-notebook.is-expanded {
+  box-shadow: 0 6px 20px rgba(58, 39, 26, 0.22), 0 2px 6px rgba(58, 39, 26, 0.12);
+}
+
+/* Enquadernació en espiral */
+.notebook-spiral {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  background: #C8C0B0;
+  border-right: 1px solid #B0A898;
+  z-index: 2;
+}
+
+.spiral-ring {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #888880;
+  background: #D8D0C8;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Contingut de la llibreta */
+.notebook-content {
+  padding: 10px 12px 12px 32px; /* Espai per a l'espiral */
+  position: relative;
+}
+
+/* Capçalera de la llibreta */
+.notebook-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0 8px;
+  border-bottom: 2px solid #C8B0B0; /* Línia divisora càlida */
+  margin-bottom: 8px;
+}
+
+.notebook-label {
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+/* Línies pautades del paper */
+.notebook-lines {
+  position: absolute;
+  inset: 0;
+  top: 42px; /* Comença sota la capçalera */
+  background-image: repeating-linear-gradient(
+    transparent 0px,
+    transparent 27px,
+    rgba(180, 200, 255, 0.25) 27px,
+    rgba(180, 200, 255, 0.25) 28px
+  );
+  background-size: 100% 28px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Línia de marge esquerra */
+.notebook-margin {
+  position: absolute;
+  top: 42px;
+  left: 50px;
+  bottom: 0;
+  width: 1.5px;
+  background: rgba(199, 13, 11, 0.25);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Textarea de notes */
+.notebook-textarea {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  background: transparent;
+  border: none;
+  resize: none;
+  font-family: 'Segoe Print', 'Comic Sans MS', cursive, system-ui;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  line-height: 28px; /* Alinea amb les línies del paper */
+  padding: 0 0 0 8px;
+  outline: none;
+  box-sizing: border-box;
+  overflow-y: auto;
+  transition: height 200ms ease;
+}
+
+.notebook-textarea::placeholder {
+  color: var(--text-tertiary);
   font-style: italic;
 }
 
-@media (max-width: 900px) {
-  .study-layout {
-    flex-direction: column;
-    gap: 30px;
+.notebook-textarea:focus-visible {
+  outline: none; /* El focus es gestiona via el wrapper */
+}
+
+/* Wrapper amb focus visible quan el textarea té focus */
+.desk-notebook:focus-within {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.notebook-char-count {
+  text-align: right;
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  color: var(--text-tertiary);
+  padding-top: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Llapis CSS-only ─────────────────────────────────────── */
+.css-pencil {
+  position: absolute;
+  bottom: -28px;
+  right: -14px;
+  width: 14px;
+  height: 130px;
+  transform: rotate(15deg);
+  transform-origin: center bottom;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  transition: transform 200ms ease-out, filter 200ms ease-out;
+  filter: drop-shadow(1px 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+.css-pencil:hover {
+  transform: rotate(8deg);
+  filter: drop-shadow(2px 4px 8px rgba(174, 130, 4, 0.45));
+}
+
+/* Goma d'esborrar */
+.pencil-eraser {
+  width: 14px;
+  height: 18px;
+  background: linear-gradient(180deg, #F9A8D4, #EC4899);
+  border-radius: 4px 4px 0 0;
+  flex-shrink: 0;
+}
+
+/* Virolla metàl·lica */
+.pencil-ferrule {
+  width: 14px;
+  height: 10px;
+  background: linear-gradient(
+    90deg,
+    #B0B0B0 0%,
+    #E8E8E8 35%,
+    #C0C0C0 65%,
+    #D8D8D8 100%
+  );
+  flex-shrink: 0;
+}
+
+/* Cos del llapis */
+.pencil-body {
+  width: 14px;
+  flex: 1;
+  background: linear-gradient(
+    90deg,
+    #FCD34D 0%,
+    #FBBF24 30%,
+    #F59E0B 70%,
+    #D97706 100%
+  );
+  flex-shrink: 0;
+}
+
+/* Punta del llapis */
+.pencil-tip {
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 22px solid #D97706;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Grafit — punta fosca */
+.pencil-graphite {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 5px;
+  background: var(--base-deep);
+  border-radius: 0 0 1px 1px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   TEMPORITZADOR (DeskTimer)
+   Dispositiu físic circular amb glow progressiu.
+   ════════════════════════════════════════════════════════════ */
+
+/* Cara circular del temporitzador */
+.desk-timer-face {
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  border: 7px solid var(--border-default);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+
+  /* Gradient de fons metàl·lic / ceràmic fosc */
+  background: radial-gradient(
+    circle at 38% 32%,
+    #2A2A2A 0%,
+    #1A1A1A 50%,
+    #0D0D0D 100%
+  );
+
+  /* Ombra i glow — controlats per CSS custom props */
+  box-shadow:
+    0 0 calc(var(--timer-glow-intensity, 0) * 1px) var(--timer-glow-color, transparent),
+    0 0 calc(var(--timer-glow-intensity, 0) * 2.5px) var(--timer-glow-color, transparent),
+    0 8px 40px rgba(0, 0, 0, 0.55),
+    inset 0 0 40px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  border-color: var(--timer-glow-color, var(--border-default));
+
+  transition: box-shadow 1s ease-out, border-color 0.5s ease-out;
+}
+
+/* Pols de glow mentre el timer és en marxa */
+.desk-timer-face.is-running {
+  animation: timerGlowPulse var(--timer-glow-pulse-duration, 3s) ease-in-out infinite;
+}
+
+/* Cercle interior decoratiu */
+.desk-timer-face::before {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+}
+
+/* Marcadors de tick — decoratius */
+.timer-ticks {
+  position: absolute;
+  inset: 18px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    rgba(255, 255, 255, 0.08) 0deg 2deg,
+    transparent 2deg 30deg
+  );
+  pointer-events: none;
+}
+
+/* Marca de marca — lletra petita decorativa */
+.timer-brand {
+  position: absolute;
+  top: 56px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.45rem;
+  font-weight: 700;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.12);
+  opacity: 0.4;
+  z-index: 1;
+}
+
+/* Display del temps */
+.timer-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  z-index: 2;
+}
+
+.timer-digits {
+  font-family: 'Courier New', monospace;
+  font-size: 3rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--timer-glow-color, var(--surface-light));
+  letter-spacing: 4px;
+  text-shadow:
+    0 0 20px var(--timer-glow-color, transparent),
+    0 0 40px var(--timer-glow-color, transparent);
+  transition: color 0.5s ease, text-shadow 0.5s ease;
+  line-height: 1;
+}
+
+/* Quan no hi ha glow, mostrem el color per defecte */
+.desk-timer-face:not(.is-running) .timer-digits {
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: none;
+}
+
+.timer-status {
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  z-index: 1;
+}
+
+.timer-hint {
+  position: absolute;
+  bottom: 52px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.2);
+  text-align: center;
+  cursor: pointer;
+}
+
+/* ── Controls del temporitzador ─────────────────────────── */
+.timer-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.timer-btn-primary,
+.timer-btn-secondary,
+.timer-btn-config {
+  font-family: 'Courier New', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 9px 16px;
+  min-height: 44px; /* Touch target */
+  transition: background 150ms ease, box-shadow 150ms ease, transform 100ms ease;
+}
+
+.timer-btn-primary {
+  background: var(--surface-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  box-shadow: 0 2px 6px rgba(58, 39, 26, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.timer-btn-primary.is-active {
+  background: var(--accent-primary);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(174, 88, 21, 0.35);
+}
+.timer-btn-primary:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgba(58, 39, 26, 0.2);
+  transform: translateY(-1px);
+}
+.timer-btn-primary:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.timer-btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.timer-btn-secondary {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.timer-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.timer-btn-config {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 9px 12px;
+}
+.timer-btn-config:hover {
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Focus visible per a tots els botons del timer */
+.timer-btn-primary:focus-visible,
+.timer-btn-secondary:focus-visible,
+.timer-btn-config:focus-visible {
+  outline: 2px solid var(--accent-warm-light);
+  outline-offset: 2px;
+}
+
+/* ── Panell de configuració (max-height transition) ─────── */
+.timer-config-panel {
+  width: 100%;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 300ms ease-out, opacity 200ms ease;
+  opacity: 0;
+  border-radius: 10px;
+}
+
+.timer-config-panel.is-open {
+  max-height: 240px;
+  opacity: 1;
+}
+
+/* Contingut interior del panell */
+.timer-config-panel > * {
+  padding: 0 2px;
+}
+
+/* Toggle de mode — pastilles arrodonides */
+.timer-mode-toggle {
+  display: flex;
+  gap: 6px;
+  padding: 10px 4px 8px !important;
+}
+
+.mode-pill {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 9999px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  min-height: 40px;
+  transition: background 150ms ease, color 150ms ease;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.5);
+  background: transparent;
+}
+.mode-pill.active {
+  background: var(--surface-card);
+  color: var(--text-primary);
+  border-color: transparent;
+}
+.mode-pill:focus-visible {
+  outline: 2px solid var(--accent-warm-light);
+  outline-offset: 2px;
+}
+
+/* Fila d'ajust de minuts */
+.timer-minutes-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 4px !important;
+  flex-wrap: wrap;
+}
+
+.timer-adjust-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  transition: background 150ms ease;
+  min-height: 36px;
+}
+.timer-adjust-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.14);
+}
+.timer-adjust-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.timer-adjust-btn:focus-visible {
+  outline: 2px solid var(--accent-warm-light);
+  outline-offset: 2px;
+}
+
+.timer-minutes-input {
+  width: 52px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 6px 4px;
+  outline: none;
+  -moz-appearance: textfield;
+}
+.timer-minutes-input::-webkit-outer-spin-button,
+.timer-minutes-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.timer-minutes-input:focus-visible {
+  outline: 2px solid var(--accent-warm-light);
+  border-color: var(--accent-warm-light);
+}
+
+.timer-minutes-label {
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 2px;
+}
+
+.timer-start-btn {
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: 8px;
+  background: var(--accent-primary);
+  color: #fff;
+  border: none;
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  min-height: 44px;
+  transition: background 150ms ease, box-shadow 150ms ease;
+  margin: 6px 0 0 !important;
+  box-shadow: 0 2px 8px rgba(174, 88, 21, 0.35);
+}
+.timer-start-btn:hover {
+  background: var(--accent-primary-light);
+  box-shadow: 0 4px 16px rgba(174, 88, 21, 0.45);
+}
+.timer-start-btn:focus-visible {
+  outline: 2px solid var(--accent-warm-light);
+  outline-offset: 2px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   DISPOSITIU DE RÀDIO AMBIENTAL
+   Petit transistor / ràdio estil retro a baix de la columna.
+   ════════════════════════════════════════════════════════════ */
+
+.radio-device {
+  background: #1C1A18;
+  border-radius: 12px;
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Reixeta del parlant */
+.radio-grille {
+  height: 40px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #111 0px,
+      #111 2px,
+      #1A1A1A 2px,
+      #1A1A1A 7px
+    );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Etiqueta de la ràdio — decorativa */
+.radio-brand {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Courier New', monospace;
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--accent-calm);
+  z-index: 1;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+/* Cos de la ràdio */
+.radio-body {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Botons de so */
+.audio-btn {
+  width: 100%;
+  padding: 10px 12px;
+  text-align: left;
+  background: #242220;
+  color: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  transition: background 150ms ease, color 150ms ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  min-height: 44px; /* Touch target */
+}
+
+/* LED d'indicador */
+.audio-led {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+  transition: background 150ms ease, box-shadow 150ms ease;
+}
+
+.audio-btn.active .audio-led {
+  background: var(--accent-calm);
+  box-shadow: 0 0 6px var(--accent-calm);
+}
+
+.audio-btn:hover {
+  background: #2E2C2A;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.audio-btn.active {
+  background: #1A1E1C;
+  color: var(--accent-calm-light);
+  border-color: rgba(62, 130, 131, 0.2);
+}
+
+.audio-btn:focus-visible {
+  outline: 2px solid var(--accent-calm);
+  outline-offset: 1px;
+  border-radius: 6px;
+}
+
+/* Slider de volum */
+.volume-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 2px 2px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 2px;
+}
+
+.volume-icon {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.volume-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+}
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent-calm-light);
+  cursor: pointer;
+}
+.volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent-calm-light);
+  border: none;
+  cursor: pointer;
+}
+.volume-slider:focus-visible {
+  outline: 2px solid var(--accent-calm);
+  border-radius: 2px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE — Mòbil (320–767px)
+   Columna única apilada. Llapis amagat. Timer compacte.
+   ════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  .study-desk {
+    padding: 16px 12px 88px; /* Espai nav inferior */
   }
-  .study-panel {
-    width: 100%;
-    height: auto;
-    min-height: 200px;
+
+  .study-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 16px;
+  }
+
+  /* Ordre: Timer → Corkboard → Notebook → Radio */
+  .desk-timer-wrapper { grid-column: 1; order: 1; }
+  .corkboard-wrapper   { grid-column: 1; order: 2; }
+  .study-left-col      { grid-column: 1; order: 3; }
+
+  /* Timer compacte en mòbil */
+  .desk-timer-face {
+    width: 180px;
+    height: 180px;
+  }
+  .timer-digits { font-size: 2.2rem; }
+
+  /* Grid de post-its: 1-2 columnes */
+  .postits-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  /* Llapis amagat en mòbil */
+  .css-pencil { display: none; }
+
+  /* Panell de config del timer — full-width */
+  .timer-config-panel.is-open {
+    max-height: 280px;
+  }
+
+  /* Corkboard — ample complet */
+  .corkboard-surface { min-height: 320px; }
+
+  /* Notebook compacte */
+  .desk-notebook { border-radius: 8px; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE — Tauleta (768–1023px)
+   Dues columnes. Timer 200px. Post-its 2 columnes.
+   ════════════════════════════════════════════════════════════ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .study-layout {
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: auto auto;
+    gap: 16px;
+  }
+
+  /* Columna esquerra: Notebook + Radio */
+  .study-left-col { grid-column: 1; grid-row: 1 / span 2; }
+
+  /* Corkboard ocupa la columna dreta */
+  .corkboard-wrapper { grid-column: 2; grid-row: 1; }
+
+  /* Timer sota el corkboard */
+  .desk-timer-wrapper {
+    grid-column: 2;
+    grid-row: 2;
+    align-items: center;
+  }
+
+  .desk-timer-face { width: 200px; height: 200px; }
+  .timer-digits { font-size: 2.6rem; }
+
+  /* Post-its: 2 columnes */
+  .postits-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+
+  /* Llapis en tauleta — opcional, amagar si massa estret */
+  .css-pencil { display: none; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   PREFERS-REDUCED-MOTION — Timer sense pulsació
+   ════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .desk-timer-face.is-running {
+    animation: none;
+    /* Shadow estàtic sense pulsació */
+    box-shadow:
+      0 0 calc(var(--timer-glow-intensity, 0) * 0.8px) var(--timer-glow-color, transparent),
+      0 8px 40px rgba(0, 0, 0, 0.55),
+      inset 0 0 40px rgba(0, 0, 0, 0.6);
+  }
+
+  .postit-note:hover {
+    transform: none !important;
+    box-shadow: 3px 4px 10px rgba(0, 0, 0, 0.22) !important;
+  }
+
+  .css-pencil:hover {
+    transform: rotate(15deg);
+    filter: drop-shadow(1px 2px 4px rgba(0, 0, 0, 0.35));
+  }
+
+  .timer-config-panel {
+    transition: opacity 150ms ease;
   }
 }

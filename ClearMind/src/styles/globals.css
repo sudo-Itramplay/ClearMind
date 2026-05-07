@@ -1,0 +1,246 @@
+/* ============================================================
+   globals.css — Sistema de disseny base ClearMind
+   Directives de Tailwind + Variables CSS + Textura de soroll
+   ============================================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------
+   Variables CSS — Mode clar (crema de cafè)
+   Totes les superfícies imiten materials càlids i analògics:
+   paper, cartró, fusta clara, ceràmica.
+   ------------------------------------------------------------ */
+:root {
+  /* Accents principals */
+  --accent-primary:       #AE5815;
+  --accent-primary-light: #D4956A;
+  --accent-primary-50:    #FDF5EE;
+
+  /* Neutrals càlids */
+  --surface-muted:  #57493B;
+  --base-dark:      #203E39;
+  --base-deep:      #3A271A;
+
+  /* Accents secundaris */
+  --accent-warm:       #AE8204;
+  --accent-warm-light: #D9B84F;
+
+  --accent-critical:       #C70D0B;
+  --accent-critical-light: #E87878;
+
+  --accent-calm:       #3E8283;
+  --accent-calm-light: #7AB5B5;
+
+  /* Superfícies — mode clar */
+  --surface-light:    #FBF7F0;
+  --surface-card:     #F5EDE3;
+  --surface-elevated: #FFFFFF;
+
+  /* Text */
+  --text-primary:   #3A271A;
+  --text-secondary: #57493B;
+  --text-tertiary:  #8C7B6B;
+
+  /* Vores */
+  --border-default: #D4C8BA;
+  --border-soft:    #E8DDD0;
+
+  /* ── Propietats específiques de la Sala (Hall) ──────── */
+  /* Colors de fusta i entorn fosc del vestíbul */
+  --hall-floor-dark:  #1A1208;
+  --hall-floor-mid:   #2A1C0A;
+  --hall-ceiling:     #060606;
+  --wood-light:       #C4A882;
+  --wood-mid:         #9B7450;
+  --wood-dark:        #6B4A28;
+  --wood-grain:       rgba(61, 43, 26, 0.28);
+
+  /* ── Propietats del temporitzador — actualitzades per React ── */
+  /* Aquests valors s'actualitzen via l'atribut style del component */
+  --timer-glow-color:          transparent;
+  --timer-glow-intensity:      0;
+  --timer-glow-pulse-duration: 3s;
+}
+
+/* ------------------------------------------------------------
+   Variables CSS — Mode fosc (cafè de nit)
+   Dimly lit café at night — warm and deep, never cold/blue.
+   ------------------------------------------------------------ */
+[data-theme="dark"] {
+  --surface-light:    #1A2E2B;
+  --surface-card:     #203530;
+  --surface-elevated: #2A4540;
+
+  --text-primary:   #F5EDE3;
+  --text-secondary: #C8B9A8;
+  --text-tertiary:  #8C7B6B;
+
+  --border-default: #3D5550;
+  --border-soft:    #2F4A45;
+
+  --accent-primary-50: rgba(174, 88, 21, 0.12);
+  --surface-muted: #4A5E5A;
+
+  /* Timer — sense canvis al mode fosc (valors inicials iguals) */
+  --timer-glow-color:          transparent;
+  --timer-glow-intensity:      0;
+  --timer-glow-pulse-duration: 3s;
+}
+
+/* ------------------------------------------------------------
+   Estils base — tipografia i cos del document
+   ------------------------------------------------------------ */
+.clearmind-app {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--surface-light);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Transició suau per a canvis de tema */
+.clearmind-app,
+.clearmind-app * {
+  transition-property: background-color, border-color, color;
+  transition-duration: 200ms;
+  transition-timing-function: ease-out;
+}
+
+/* Excepció: no transicionar animacions pròpies dels components */
+.clearmind-app .breathing-circle,
+.clearmind-app .desk-timer-face {
+  transition: none;
+}
+
+/* ------------------------------------------------------------
+   Textura de soroll — CSS pura, sense imatges
+   Simula el gra subtil del paper o la superfície de fusta.
+   ------------------------------------------------------------ */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.035'/></svg>");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+}
+
+/* ------------------------------------------------------------
+   Anells de focus accessibles — càlids, visibles, WCAG AA
+   ------------------------------------------------------------ */
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Focus específic per a elements sobre fons foscos (Hall, Study) */
+.dark-surface :focus-visible {
+  outline-color: var(--accent-warm-light);
+}
+
+/* ------------------------------------------------------------
+   Animació de pols del temporitzador
+   Activada quan el timer és en marxa via la classe .is-running
+   Actualitzada per --timer-glow-color i --timer-glow-intensity
+   ------------------------------------------------------------ */
+@keyframes timerGlowPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 calc(var(--timer-glow-intensity) * 0.6px) var(--timer-glow-color),
+      0 0 calc(var(--timer-glow-intensity) * 1.2px) var(--timer-glow-color),
+      0 8px 40px rgba(0, 0, 0, 0.55),
+      inset 0 0 40px rgba(0, 0, 0, 0.6);
+  }
+  50% {
+    box-shadow:
+      0 0 calc(var(--timer-glow-intensity) * 1px) var(--timer-glow-color),
+      0 0 calc(var(--timer-glow-intensity) * 2.5px) var(--timer-glow-color),
+      0 0 calc(var(--timer-glow-intensity) * 4px) var(--timer-glow-color),
+      0 8px 40px rgba(0, 0, 0, 0.55),
+      inset 0 0 40px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Animació del cercle de respiració */
+@keyframes breatheIn {
+  from { transform: scale(1);    border-color: var(--accent-calm-light); }
+  to   { transform: scale(1.28); border-color: var(--accent-calm); }
+}
+@keyframes breatheOut {
+  from { transform: scale(1.28); border-color: var(--accent-calm); }
+  to   { transform: scale(1);    border-color: var(--accent-calm-light); }
+}
+@keyframes breatheHold {
+  from, to { transform: scale(1.28); border-color: var(--accent-warm-light); }
+}
+
+/* ------------------------------------------------------------
+   Suport per a prefers-reduced-motion
+   Desactiva o minimitza TOTES les animacions/transicions
+   per a usuaris que ho requereixin.
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  /* Elimina la pulsació del timer — substituïda per shadow estàtic */
+  @keyframes timerGlowPulse {
+    0%, 100% {
+      box-shadow:
+        0 0 calc(var(--timer-glow-intensity) * 0.8px) var(--timer-glow-color),
+        0 8px 40px rgba(0, 0, 0, 0.55),
+        inset 0 0 40px rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  /* Elimina les animacions de respiració — canvi d'opacitat únicament */
+  @keyframes breatheIn  { from, to { opacity: 0.8; } }
+  @keyframes breatheOut { from, to { opacity: 0.6; } }
+  @keyframes breatheHold { from, to { opacity: 0.7; } }
+
+  /* Elimina les transicions globals de moviment */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Conserva les transicions de color (no-moviment, útils per accessibilitat) */
+  .clearmind-app,
+  .clearmind-app *:not(.breathing-circle):not(.desk-timer-face) {
+    transition-property: color, background-color, border-color, opacity;
+    transition-duration: 150ms;
+  }
+}
+
+/* ------------------------------------------------------------
+   Utilities addicionals via @layer
+   ------------------------------------------------------------ */
+@layer utilities {
+  .scrollbar-warm {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-default) transparent;
+  }
+  .scrollbar-warm::-webkit-scrollbar { width: 6px; }
+  .scrollbar-warm::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-warm::-webkit-scrollbar-thumb {
+    background-color: var(--border-default);
+    border-radius: 9999px;
+  }
+
+  .heading-tracking { letter-spacing: -0.01em; }
+
+  .theme-transition {
+    transition: background-color 300ms ease-out,
+                color 200ms ease-out,
+                border-color 200ms ease-out;
+  }
+
+  /* Superfície fosca — per a Hall i Study */
+  .dark-surface { background-color: var(--hall-floor-dark); }
+}

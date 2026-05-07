@@ -1,94 +1,548 @@
+/* ============================================================
+   Hall.css — Estils de la vista Sala (vestíbul principal)
+   Estètica: cafè / sala d'estar residencial Le Blanc (Persona 5)
+   Totes les variables referenciades des de globals.css
+   ============================================================ */
+
+/* ── Contenidor principal: escenari en perspectiva ───── */
 .hall-container {
+  min-height: calc(100vh - 56px); /* Resta l'alçada del Header */
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  height: 80vh;
-  perspective: 1000px; /* Creem l'efecte 3D */
-  padding: 20px;
+  justify-content: space-between;
+  padding: 0 32px 60px;
   position: relative;
+  perspective: 1100px;
+  perspective-origin: 50% 42%;
   overflow: hidden;
+
+  /* Parquet de fusta càlida amb llistons horitzontals */
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 56px,
+      var(--wood-grain) 56px,
+      var(--wood-grain) 58px
+    ),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0px,
+      transparent 22px,
+      rgba(26, 18, 8, 0.15) 22px,
+      rgba(26, 18, 8, 0.15) 23px
+    ),
+    linear-gradient(
+      to bottom,
+      var(--hall-floor-dark) 0%,
+      var(--hall-floor-mid) 70%,
+      #321F0C 100%
+    );
 }
 
-/* Portes inclinades cap endavant */
+/* ── Sostre — franja fosca a la part superior ─────────── */
+.hall-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 17%;
+  background: linear-gradient(
+    to bottom,
+    var(--hall-ceiling) 0%,
+    #111111 100%
+  );
+  /* Motllura del sostre — línia subtil */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Ombres laterals — simulen les parets en perspectiva ─ */
+.hall-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right,  rgba(0, 0, 0, 0.55) 0%, transparent 22%),
+    linear-gradient(to left,   rgba(0, 0, 0, 0.55) 0%, transparent 22%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Porta base — fusta residencial càlida ─────────────── */
 .door {
   width: 150px;
-  height: 300px;
-  background: var(--code-bg);
-  border: 4px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  height: 310px;
+  position: relative;
+  cursor: pointer;
   text-decoration: none;
-  transition: transform 0.3s;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  transform-style: preserve-3d;
+  transition:
+    transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    box-shadow 0.4s ease;
   z-index: 2;
+
+  /* Fusta: gra vertical suau amb tons càlids */
+  background:
+    repeating-linear-gradient(
+      180deg,
+      transparent 0px,
+      transparent 16px,
+      rgba(0, 0, 0, 0.06) 16px,
+      rgba(0, 0, 0, 0.06) 17px
+    ),
+    repeating-linear-gradient(
+      91deg,
+      transparent 0px,
+      transparent 28px,
+      var(--wood-grain) 28px,
+      var(--wood-grain) 30px
+    ),
+    linear-gradient(
+      158deg,
+      var(--wood-light) 0%,
+      var(--wood-mid)   50%,
+      var(--wood-dark)  100%
+    );
+
+  /* Arrodoniment — res de tall — estètica residencial */
+  border-radius: 10px 10px 4px 4px;
+  border: 2px solid var(--wood-dark);
+  box-shadow:
+    0 6px 24px rgba(0, 0, 0, 0.5),
+    0 2px 6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  outline: 1px solid rgba(196, 168, 130, 0.2);
+  outline-offset: -3px;
 }
 
+/* ── Marc interior de la porta ────────────────────────── */
+.door-frame {
+  position: absolute;
+  inset: 10px;
+  border: 2px solid rgba(0, 0, 0, 0.35);
+  border-radius: 6px 6px 2px 2px;
+  background: linear-gradient(
+    148deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(255, 255, 255, 0.03)
+  );
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+/* ── Pom de la porta — llautó càlid ──────────────────── */
+.door::after {
+  content: '';
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 32%,
+    #E0C57A,
+    #9B7040,
+    #5C3D18
+  );
+  border: 1.5px solid rgba(0, 0, 0, 0.4);
+  box-shadow:
+    1px 1px 0 rgba(0, 0, 0, 0.6),
+    inset 1px 1px 2px rgba(255, 220, 150, 0.35);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+}
+
+/* ── Etiqueta interior de la porta ─────────────────────── */
+.door-label {
+  position: absolute;
+  bottom: 28px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--surface-light);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* ── Porta esquerra — perspectiva cap a la dreta ─────── */
 .left-door {
-  transform: rotateY(30deg);
-  border-radius: 5px 20px 20px 5px;
+  transform: rotateY(36deg) translateX(-18px);
+  transform-origin: left center;
+}
+.left-door::after {
+  right: 16px;
+  left: auto;
 }
 
+/* Efecte d'obertura en hover — porta que s'obre lleugerament */
+.left-door:hover {
+  transform: rotateY(18deg) translateX(-8px) scale(1.02);
+  box-shadow:
+    0 10px 32px rgba(174, 88, 21, 0.3),
+    0 4px 10px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* ── Porta dreta — perspectiva simètrica ─────────────── */
 .right-door {
-  transform: rotateY(-30deg);
-  border-radius: 20px 5px 5px 20px;
+  transform: rotateY(-36deg) translateX(18px);
+  transform-origin: right center;
+}
+.right-door::after {
+  left: 16px;
+  right: auto;
 }
 
-.door:hover {
-  border-color: var(--accent);
-  transform: scale(1.05) rotateY(0deg);
+.right-door:hover {
+  transform: rotateY(-18deg) translateX(8px) scale(1.02);
+  box-shadow:
+    0 10px 32px rgba(62, 130, 131, 0.3),
+    0 4px 10px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* Mur Central */
+/* ── Focus visible per a les portes (accessibilitat) ─── */
+.door:focus-visible {
+  outline: 2px solid var(--accent-warm-light);
+  outline-offset: 3px;
+  border-radius: 10px 10px 4px 4px;
+}
+
+/* ── Paret central — rellotge i tauler ───────────────── */
 .center-wall {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  gap: 20px;
+  z-index: 3;
+  position: relative;
 }
 
+/* ── Rellotge — cercle decoratiu estil analògic ────────── */
 .clock-circle {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  border: 3px solid var(--text-h);
+  background: radial-gradient(
+    circle at 38% 35%,
+    #1E1E1E,
+    #0A0A0A
+  );
+  border: 3px solid var(--wood-dark);
+  box-shadow:
+    0 0 0 1px rgba(196, 168, 130, 0.2),
+    0 6px 20px rgba(0, 0, 0, 0.6),
+    inset 0 0 24px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  font-weight: bold;
+  justify-content: center;
+  gap: 2px;
+  position: relative;
 }
 
-.calendar-board {
-  width: 300px;
-  background: white;
-  padding: 15px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-}
-
-/* La catifa del sketch */
-.rug {
+/* Cercle interior decoratiu del rellotge */
+.clock-circle::before {
+  content: '';
   position: absolute;
-  bottom: -50px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 400px;
-  height: 150px;
-  background: repeating-radial-gradient(circle, transparent, transparent 10px, var(--accent-bg) 10px, var(--accent-bg) 20px);
-  border: 2px solid var(--border);
+  inset: 7px;
   border-radius: 50%;
+  border: 1px solid rgba(196, 168, 130, 0.15);
+  pointer-events: none;
+}
+
+/* Display de l'hora */
+.clock-time {
+  font-family: 'Courier New', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent-warm-light);
+  letter-spacing: 2px;
+  z-index: 1;
+  text-shadow: 0 0 12px rgba(174, 130, 4, 0.5);
+}
+
+/* Etiqueta "RELLOTGE" a sota */
+.clock-circle p {
+  font-family: 'Courier New', monospace;
+  font-size: 0.45rem;
+  font-weight: 700;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: rgba(196, 168, 130, 0.45);
+  margin: 0;
   z-index: 1;
 }
 
+/* ── Tauler de tasques — suro / paper ──────────────────── */
+.calendar-board {
+  width: 260px;
+  background: var(--surface-card);
+  border: 2px solid var(--wood-dark);
+  border-radius: 8px;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.45),
+    0 2px 6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  padding: 14px;
+  position: relative;
+}
+
+/* Punxes decoratives del tauler */
+.calendar-board::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #D4956A, #7A3010);
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* Títol del tauler */
+.calendar-board h2 {
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin: 0 0 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--border-default);
+}
+
+/* ── Llista de tasques al tauler ────────────────────────── */
 .todo-list {
   list-style: none;
   padding: 0;
-  text-align: left;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.todo-list .done {
+.todo-list li {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  padding: 5px 8px;
+  border-left: 2px solid var(--border-default);
+  border-radius: 0 4px 4px 0;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+  background: rgba(255, 255, 255, 0.3);
+  transition: border-color 150ms ease;
+}
+
+.todo-list li.done {
   text-decoration: line-through;
-  opacity: 0.5;
+  color: var(--text-tertiary);
+  border-left-color: var(--border-soft);
+  opacity: 0.55;
+}
+
+/* ── Catifa — element decoratiu del sòl ─────────────────── */
+.rug {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 360px;
+  height: 72px;
+  border-radius: 50%;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--accent-primary) 0px,
+    var(--accent-primary) 7px,
+    var(--accent-warm) 7px,
+    var(--accent-warm) 14px,
+    transparent 14px,
+    transparent 18px
+  );
+  opacity: 0.12;
+  border: 1px solid var(--accent-primary-light);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE — Mòbil (320–767px)
+   Les portes passen a ser targetes horitzontals apilades.
+   La perspectiva 3D es desactiva (transform: none).
+   ════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  .hall-container {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px 16px 80px; /* Espai per a la nav inferior */
+    perspective: none;
+    perspective-origin: unset;
+    gap: 16px;
+    min-height: calc(100vh - 56px);
+  }
+
+  /* Amaga les ombres de paret lateral en mòbil */
+  .hall-container::after {
+    display: none;
+  }
+
+  /* El sostre s'adapta a mòbil */
+  .hall-container::before {
+    height: 8%;
+  }
+
+  /* Paret central — primer per a l'ordre de lectura correcte */
+  .center-wall {
+    order: -1;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  /* Portes → targetes horitzontals accessibles */
+  .door {
+    /* Desactiva tota la perspectiva 3D */
+    transform: none !important;
+    transform-style: flat;
+    transform-origin: unset;
+
+    /* Redisseny com a targeta ampla */
+    width: 100%;
+    max-width: 320px;
+    height: 72px; /* Touch target: mínim 44px, aquí 72px */
+    border-radius: 16px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 0 24px;
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.35),
+      0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  /* El pom desapareix en la vista de targeta */
+  .door::after {
+    display: none;
+  }
+
+  /* El marc interior s'oculta en mòbil */
+  .door-frame {
+    display: none;
+  }
+
+  /* Etiqueta de la porta — visible i llegible */
+  .door-label {
+    position: static;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    color: var(--surface-light);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  }
+
+  /* Hover simple en mòbil — no transform */
+  .left-door:hover,
+  .right-door:hover {
+    transform: none !important;
+    box-shadow:
+      0 6px 16px rgba(174, 88, 21, 0.3),
+      0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Focus visible en mòbil */
+  .door:focus-visible {
+    outline-offset: 2px;
+    border-radius: 16px;
+  }
+
+  /* Rellotge lleugerament més petit */
+  .clock-circle {
+    width: 100px;
+    height: 100px;
+  }
+  .clock-time { font-size: 1.25rem; }
+
+  /* Tauler de tasques — ample complet */
+  .calendar-board {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  /* Catifa oculta en mòbil */
+  .rug { display: none; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE — Tauleta (768–1023px)
+   Disposició de 3 columnes conservada però més estreta.
+   ════════════════════════════════════════════════════════════ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hall-container {
+    padding: 0 16px 48px;
+    perspective: 900px;
+  }
+
+  .door {
+    width: 120px;
+    height: 260px;
+  }
+
+  .clock-circle {
+    width: 104px;
+    height: 104px;
+  }
+  .clock-time { font-size: 1.3rem; }
+
+  .calendar-board { width: 220px; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   PREFERS-REDUCED-MOTION — Desactiva les portes 3D
+   Substitueix la perspectiva per un canvi de vora/ombra
+   ════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .door {
+    transition: box-shadow 150ms ease, border-color 150ms ease;
+  }
+
+  .left-door {
+    transform: rotateY(36deg) translateX(-18px);
+  }
+  .right-door {
+    transform: rotateY(-36deg) translateX(18px);
+  }
+
+  /* Hover: canvi de color en comptes de transform */
+  .left-door:hover,
+  .right-door:hover {
+    transform: rotateY(36deg) translateX(-18px); /* Sense moviment */
+    border-color: var(--accent-primary-light);
+    box-shadow:
+      0 6px 20px rgba(174, 88, 21, 0.25),
+      0 2px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  .right-door:hover {
+    transform: rotateY(-36deg) translateX(18px);
+    border-color: var(--accent-calm-light);
+  }
 }

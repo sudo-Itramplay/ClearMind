@@ -1,35 +1,44 @@
 .header {
   display: flex;
-  justify-content: space-between; /* Logo a l'esquerra, nav al centre, spacer a la dreta */
   align-items: center;
-  padding: 0 2rem;
-  height: 70px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Una petita ombra inferior */
-  position: sticky; /* Queda fix a dalt en fer scroll */
+  justify-content: space-between;
+  height: 56px;
+  background: #080808;
+  border-bottom: 2px solid var(--color-secondary);
+  position: sticky;
   top: 0;
   z-index: 1000;
+  padding: 0 20px;
 }
 
 .logo {
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: #333;
-  flex: 1; /* Ocupa espai a l'esquerra */
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--color-text);
+  flex: 1;
+}
+
+.logo::before {
+  content: '> ';
+  color: var(--color-secondary);
 }
 
 .nav {
-  flex: 2; /* Ocupa més espai central per assegurar el centrat */
+  flex: 2;
   display: flex;
-  justify-content: center; /* Centra la llista de pestanyes */
+  justify-content: center;
 }
 
 .tabList {
-  display: flex;
   list-style: none;
-  margin: 0;
+  display: flex;
+  gap: 0;
   padding: 0;
-  gap: 1rem; /* Espai entre pestanyes */
+  margin: 0;
+  border: var(--border-brutal);
 }
 
 .tabItem {
@@ -37,30 +46,33 @@
 }
 
 .tabButton {
-  background: none;
+  padding: 8px 24px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--color-text-muted);
+  background: transparent;
   border: none;
-  padding: 0.5rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #666; /* Color per defecte (no seleccionat) */
+  border-right: 1px solid #2A2A2A;
   cursor: pointer;
-  transition: all 0.3s ease; /* Animació suau del canvi de color */
-  border-radius: 20px; /* Bordes arrodonits */
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
 }
 
-/* Estil quan passem el ratolí per sobre (hover) */
-.tabButton:hover:not(.active) {
-  background-color: #f0f0f0;
-  color: #333;
+.tabButton:hover {
+  background: var(--color-surface);
+  color: var(--color-text);
 }
 
-/* --- L'ESTIL PER A LA PESTANYA SELECCIONADA --- */
 .tabButton.active {
-  background-color: #007bff; /* Blau corporatiu */
-  color: #ffffff; /* Text blanc per a contrast */
-  font-weight: 600;
+  background: var(--color-secondary);
+  color: var(--color-paper);
+  font-weight: 700;
 }
 
 .spacer {
-  flex: 1; /* Ocupa espai a la dreta per equilibrar el logo */
+  flex: 1;
 }

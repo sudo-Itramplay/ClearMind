@@ -1,233 +1,167 @@
-import React, { useState, useEffect, useRef } from 'react'; 
-import { useTodos } from '../context/TodoContext';
-import './css/Study.css';
+/* Study.jsx — Vista de la sala d'estudi
+   Escriptori de fusta amb: tauler de suro, llibreta, temporitzador, ràdio
+   WCAG 2.1 AA: aria-labels, role="main", aria-live, focus visible
+   Accessibilitat del slider: aria-label, aria-valuenow               */
 
+import { useState, useEffect, useRef } from 'react'
+import { DeskTimer }    from '../components/features/desk-timer'
+import { CorkBoard }    from '../components/features/cork-board'
+import { DeskNotebook } from '../components/features/desk-notebook'
+import './css/Study.css'
+
+/* Sons ambientals disponibles */
 const ambientSounds = [
-  { id: 'pluja', name: 'Pluja suau', file: '/sounds/pluja.mp3', icon: '🌧️' },
-  { id: 'cafe', name: 'Cafeteria', file: '/sounds/cafeteria.mp3', icon: '☕' },
-  { id: 'lofi', name: 'Ritmes Lo-Fi', file: '/sounds/lofi.mp3', icon: '🎧' }
-];
+  { id: 'pluja',      label: 'Pluja',      icon: '🌧', file: '/sounds/pluja.mp3'      },
+  { id: 'cafeteria',  label: 'Cafeteria',  icon: '☕', file: '/sounds/cafeteria.mp3'  },
+  { id: 'lofi',       label: 'Lo-Fi',      icon: '🎵', file: '/sounds/lofi.mp3'       },
+]
 
+/* Dispositiu de ràdio ambiental — component intern */
+function RadioDevice({ currentSound, isPlaying, volume, onToggle, onVolume }) {
+  return (
+    <div
+      className="radio-device"
+      role="region"
+      aria-label="Ràdio d'àudio ambiental"
+    >
+      {/* Reixeta decorativa del parlant */}
+      <div className="radio-grille" aria-hidden="true" />
+
+      {/* Etiqueta de marca — decorativa */}
+      <span className="radio-brand" aria-hidden="true">AMBIENT</span>
+
+      {/* Cos principal — botons + volum */}
+      <div className="radio-body">
+        {ambientSounds.map(sound => {
+          const active = currentSound?.id === sound.id && isPlaying
+          return (
+            <button
+              key={sound.id}
+              className={`audio-btn${active ? ' active' : ''}`}
+              onClick={() => onToggle(sound)}
+              aria-pressed={active}
+              aria-label={
+                active
+                  ? `Atura el so de ${sound.label}`
+                  : `Reproduir so de ${sound.label}`
+              }
+            >
+              {/* LED d'estat */}
+              <span className="audio-led" aria-hidden="true" />
+              <span aria-hidden="true">{sound.icon}</span>
+              {sound.label}
+            </button>
+          )
+        })}
+
+        {/* Control de volum */}
+        <div className="volume-row">
+          <span className="volume-icon" aria-hidden="true">🔈</span>
+          <input
+            type="range"
+            className="volume-slider"
+            min={0}
+            max={1}
+            step={0.05}
+            value={volume}
+            onChange={e => onVolume(Number(e.target.value))}
+            aria-label="Control de volum"
+            aria-valuenow={Math.round(volume * 100)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          />
+          <span className="volume-icon" aria-hidden="true">🔊</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* Component principal de la vista d'estudi */
 const Study = () => {
-  // --- ESTATS TASQUES (ARA USANT CONTEXT) ---
-  const { todos, addTodo, toggleTodo } = useTodos();
-  
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [formData, setFormData] = useState({ task: '', description: '' });
-  const [selectedTask, setSelectedTask] = useState(null); 
+  /* ── Estat de l'àudio ambiental ──────────────────────────── */
+  const [currentSound, setCurrentSound] = useState(null)
+  const [isPlaying,    setIsPlaying]    = useState(false)
+  const [volume,       setVolume]       = useState(0.5)
+  const audioRef = useRef(null)
 
-  // --- ESTATS RELLOTGE ---
-  const [timerMode, setTimerMode] = useState('temporitzador'); 
-  const [time, setTime] = useState(25 * 60); 
-  const [isActive, setIsActive] = useState(false);
-  const [inputMinutes, setInputMinutes] = useState(25); 
-
-  // --- ESTATS ÀUDIO ---
-  const [currentSound, setCurrentSound] = useState(null); 
-  const [isPlaying, setIsPlaying] = useState(false); 
-  const audioRef = useRef(null); 
-  const [volume, setVolume] = useState(0.5); 
-
-  // --- LÒGIQUES ---
-
+  /* Sincronitza el volum amb l'element àudio */
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = volume;
+      audioRef.current.volume = volume
     }
-  }, [volume]);
+  }, [volume])
 
-  useEffect(() => {
-    let interval = null;
-    if (isActive) {
-      interval = setInterval(() => {
-        setTime((prevTime) => {
-          if (timerMode === 'temporitzador') {
-            if (prevTime <= 1) {
-              clearInterval(interval);
-              setIsActive(false);
-              return 0;
-            }
-            return prevTime - 1;
-          } else {
-            return prevTime + 1;
-          }
-        });
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isActive, timerMode]);
-
-  const toggleTimer = () => setIsActive(!isActive);
-  const resetTimer = () => {
-    setIsActive(false);
-    setTime(timerMode === 'temporitzador' ? inputMinutes * 60 : 0);
-  };
-
-  const formatTime = (totalSeconds) => {
-    const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
-    const seconds = (totalSeconds % 60).toString().padStart(2, '0');
-    return `${minutes}:${seconds}`;
-  };
-
-  const handleAddTaskSubmit = (e) => {
-    e.preventDefault(); 
-    if (formData.task.trim() === '') return;
-    addTodo({ 
-      id: Date.now(), 
-      task: formData.task, 
-      description: formData.description, 
-      completed: false 
-    }); 
-    setFormData({ task: '', description: '' });
-    setIsMenuOpen(false);
-  };
-
-  const handleToggleAudio = (sound) => {
-    if (currentSound && currentSound.id === sound.id) {
+  /* Activa o canvia el so ambient */
+  function handleToggleSound(sound) {
+    /* Mateix so → pausa o reprèn */
+    if (currentSound?.id === sound.id) {
       if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
+        audioRef.current?.pause()
+        setIsPlaying(false)
       } else {
-        audioRef.current.play();
-        setIsPlaying(true);
+        audioRef.current?.play().catch(() => {})
+        setIsPlaying(true)
       }
-    } else {
-      setCurrentSound(sound);
-      setIsPlaying(true);
-      setTimeout(() => {
-        if (audioRef.current) {
-          audioRef.current.play();
-        }
-      }, 50);
+      return
     }
-  };
+
+    /* So diferent → canvia la font i reprodueix */
+    setCurrentSound(sound)
+    setIsPlaying(true)
+    /* El canvi de src dispararà l'effecte de play */
+  }
+
+  /* Quan canvia la font, inicia la reproducció */
+  useEffect(() => {
+    if (!currentSound || !isPlaying) return
+    const el = audioRef.current
+    if (!el) return
+    el.load()
+    el.play().catch(() => {})
+  }, [currentSound])
 
   return (
-    <div className="study-container">
-      <audio ref={audioRef} src={currentSound ? currentSound.file : ''} loop />
+    <main
+      className="study-desk"
+      role="main"
+      aria-label="Sala d'estudi"
+    >
+      {/* Element àudio — invisible i accessible */}
+      <audio
+        ref={audioRef}
+        src={currentSound ? currentSound.file : undefined}
+        loop
+        aria-hidden="true"
+      />
 
-      <section className="study-layout">
-        
-        {/* COLUMNA ESQUERRA: TASQUES */}
-        <div className="study-panel tasks-panel">
-          <div className="panel-header">
-            <h2>TASQUES</h2>
-            <button className="add-btn" onClick={() => setIsMenuOpen(true)}>+</button>
-          </div>
-          <div className="tasks-list-container">
-            {todos.length > 0 ? (
-              <ul className="simple-task-list">
-                {[...todos].sort((a, b) => a.completed - b.completed).map(todo => (
-                  <li key={todo.id} onClick={() => setSelectedTask(todo)} className={todo.completed ? 'done' : ''}>
-                    {todo.task}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="empty-msg">Tot llest!</p>
-            )}
-          </div>
+      {/* Vinyeta decorativa d'ambient — aria-hidden */}
+      <div className="study-vignette" aria-hidden="true" />
+
+      {/* ── Disposició de tres columnes de l'escriptori ───── */}
+      <div className="study-layout">
+
+        {/* ── COLUMNA ESQUERRA: Llibreta + Ràdio ────────── */}
+        <div className="study-left-col">
+          <DeskNotebook />
+          <RadioDevice
+            currentSound={currentSound}
+            isPlaying={isPlaying}
+            volume={volume}
+            onToggle={handleToggleSound}
+            onVolume={setVolume}
+          />
         </div>
 
-        {/* CENTRE: TIMER (CERCLE) */}
-        <div className="study-center">
-          <div className={`timer-circle ${isActive ? 'active' : ''}`} onClick={toggleTimer}>
-            <span className="timer-val">{formatTime(time)}</span>
-            <span className="timer-label">{isActive ? 'PAUSA' : 'INICI'}</span>
-          </div>
-          <div className="timer-actions">
-            <button onClick={resetTimer}>REINICIAR</button>
-            <div className="timer-settings">
-              <input 
-                type="number" 
-                value={inputMinutes} 
-                onChange={(e) => {
-                  setInputMinutes(e.target.value);
-                  if(!isActive) setTime(e.target.value * 60);
-                }}
-              />
-              <span>min</span>
-            </div>
-          </div>
-        </div>
+        {/* ── CENTRE: Tauler de suro ─────────────────────── */}
+        <CorkBoard />
 
-        {/* COLUMNA DRETA: ÀUDIO */}
-        <div className="study-panel audio-panel">
-          <div className="panel-header">
-            <h2>ÀUDIO</h2>
-          </div>
-          <div className="audio-options">
-            {ambientSounds.map(sound => (
-              <button 
-                key={sound.id} 
-                className={`audio-btn ${currentSound?.id === sound.id && isPlaying ? 'active' : ''}`}
-                onClick={() => handleToggleAudio(sound)}
-              >
-                {sound.icon} {sound.name}
-              </button>
-            ))}
-            <div className="volume-slider-container">
-              <span>Volum</span>
-              <input 
-                type="range" 
-                min="0" max="1" step="0.1" 
-                value={volume} 
-                onChange={(e) => setVolume(e.target.value)} 
-              />
-            </div>
-          </div>
-        </div>
+        {/* ── DRETA: Temporitzador ───────────────────────── */}
+        <DeskTimer />
 
-      </section>
+      </div>
+    </main>
+  )
+}
 
-      {/* MODAL CREAR TASCA */}
-      {isMenuOpen && (
-        <div className="simple-modal-overlay">
-          <div className="simple-modal">
-            <h3>Nova Tasca</h3>
-            <form onSubmit={handleAddTaskSubmit}>
-              <input 
-                type="text" 
-                placeholder="Què vols fer?" 
-                value={formData.task} 
-                onChange={e => setFormData({...formData, task: e.target.value})}
-                autoFocus
-              />
-              <textarea 
-                placeholder="Detalls (opcional)" 
-                value={formData.description} 
-                onChange={e => setFormData({...formData, description: e.target.value})}
-              />
-              <div className="modal-btns">
-                <button type="button" onClick={() => setIsMenuOpen(false)}>CANCEL·LAR</button>
-                <button type="submit" className="primary">AFEGIR</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL VEURE/COMPLETAR TASCA */}
-      {selectedTask && (
-        <div className="simple-modal-overlay">
-          <div className="simple-modal">
-            <h3 className={selectedTask.completed ? 'done' : ''}>{selectedTask.task}</h3>
-            <p>{selectedTask.description || 'Sense descripció'}</p>
-            <div className="modal-btns">
-              <button onClick={() => setSelectedTask(null)}>TANCAR</button>
-              <button className="primary" onClick={() => {
-                toggleTodo(selectedTask.id);
-                setSelectedTask(null);
-              }}>
-                {selectedTask.completed ? 'DESFER' : 'FET!'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-    </div>
-  );
-};
-
-export default Study;
+export default Study
