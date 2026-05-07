@@ -7,6 +7,10 @@ const ambientSounds = [
   { id: 'cafe', name: 'Cafeteria', file: '/sounds/cafeteria.mp3', icon: '☕' },
   { id: 'lofi', name: 'Ritmes Lo-Fi', file: '/sounds/lofi.mp3', icon: '🎧' }
 ];
+const successSounds = [
+  { id: 'check1', name: 'Ding Clàssic', file: '/sounds/check1.mp3' },
+  { id: 'check2', name: 'Campana Suau', file: '/sounds/check2.mp3' }
+];
 
 const Study = () => {
   // --- ESTATS TASQUES (ARA USANT CONTEXT) ---
@@ -101,6 +105,21 @@ const Study = () => {
       }, 50);
     }
   };
+  const handleToggleCompletion = () => {
+    if (!selectedTask.completed) {
+      
+      const randomIndex = Math.floor(Math.random() * successSounds.length);
+      const chosenSoundObject = successSounds[randomIndex];
+      
+      
+      const audio = new Audio(chosenSoundObject.file);
+      audio.volume = 0.6;
+      audio.play().catch(e => console.log("L'àudio no ha pogut sonar:", e));
+    }
+    
+    toggleTodo(selectedTask.id);
+    setSelectedTask(null);
+  };
 
   return (
     <div className="study-container">
@@ -131,23 +150,52 @@ const Study = () => {
 
         {/* CENTRE: TIMER (CERCLE) */}
         <div className="study-center">
+          {/* Selector de mode */}
+          <div className="mode-selector">
+            <button 
+              className={timerMode === 'temporitzador' ? 'active' : ''} 
+              onClick={() => {
+                setTimerMode('temporitzador');
+                setIsActive(false);
+                setTime(inputMinutes * 60);
+              }}
+            >
+              Temporitzador
+            </button>
+            <button 
+              className={timerMode === 'cronometre' ? 'active' : ''} 
+              onClick={() => {
+                setTimerMode('cronometre');
+                setIsActive(false);
+                setTime(0);
+              }}
+            >
+              Cronòmetre
+            </button>
+          </div>
+
           <div className={`timer-circle ${isActive ? 'active' : ''}`} onClick={toggleTimer}>
             <span className="timer-val">{formatTime(time)}</span>
             <span className="timer-label">{isActive ? 'PAUSA' : 'INICI'}</span>
           </div>
+
           <div className="timer-actions">
             <button onClick={resetTimer}>REINICIAR</button>
-            <div className="timer-settings">
-              <input 
-                type="number" 
-                value={inputMinutes} 
-                onChange={(e) => {
-                  setInputMinutes(e.target.value);
-                  if(!isActive) setTime(e.target.value * 60);
-                }}
-              />
-              <span>min</span>
-            </div>
+            
+            {/* Només mostrem els minuts si estem en mode temporitzador */}
+            {timerMode === 'temporitzador' && (
+              <div className="timer-settings">
+                <input 
+                  type="number" 
+                  value={inputMinutes} 
+                  onChange={(e) => {
+                    setInputMinutes(e.target.value);
+                    if(!isActive) setTime(e.target.value * 60);
+                  }}
+                />
+                <span>min</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -215,12 +263,12 @@ const Study = () => {
             <p>{selectedTask.description || 'Sense descripció'}</p>
             <div className="modal-btns">
               <button onClick={() => setSelectedTask(null)}>TANCAR</button>
-              <button className="primary" onClick={() => {
-                toggleTodo(selectedTask.id);
-                setSelectedTask(null);
-              }}>
+              
+              {/* AQUÍ FEM SERVIR LA NOVA FUNCIÓ */}
+              <button className="primary" onClick={handleToggleCompletion}>
                 {selectedTask.completed ? 'DESFER' : 'FET!'}
               </button>
+              
             </div>
           </div>
         </div>
