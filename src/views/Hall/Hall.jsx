@@ -1,7 +1,8 @@
 import React from 'react';
-import Calendar from './Calendar';
-import WallClock from './WallClock';
-import Door from './Door';
+import Calendar from './components/Calendar';
+import WallClock from './components/WallClock';
+import Door from './components/Door';
+import './style/hall.css';
 
 const DOOR_GLOWS = {
   study:    "rgba(212, 165, 116, 0.35)",

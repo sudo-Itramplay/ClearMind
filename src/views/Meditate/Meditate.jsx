@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import BackButton from '../ui/BackButton';
-import Button from '../ui/Button';
+import BackButton from '../../components/ui/BackButton';
+import Button from '../../components/ui/Button';
 import { useSoundCtx } from '../../context/SoundContext';
+import './style/meditate.css';
 
 const MEDITATION_MODES = {
   activation: {

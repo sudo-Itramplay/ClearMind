@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useTodos } from '../../context/TodoContext';
-import { useCalendarDays } from '../../hooks/useCalendarDays';
+import { useTodos } from '../../../context/TodoContext';
+import { useCalendarDays } from '../../../hooks/useCalendarDays';
 import Day from './Day';
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];

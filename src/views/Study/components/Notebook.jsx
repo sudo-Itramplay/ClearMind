@@ -1,45 +1,25 @@
 import React, { useState } from 'react';
-import Modal from '../ui/Modal';
-import Button from '../ui/Button';
-import ConfirmDialog from '../ui/ConfirmDialog';
-import NotebookForm from './NotebookForm';
-import { useTodos } from '../../context/TodoContext';
-import { dateToday } from '../../data/mockDB';
+import Modal from '../../../components/ui/Modal';
+import Button from '../../../components/ui/Button';
+import ConfirmDialog from '../../../components/ui/ConfirmDialog';
+import AddTodoModal from './AddTodoModal';
+import { useTodos } from '../../../context/TodoContext';
+import { dateToday } from '../../../data/mockDB';
 
 const Notebook = ({ open, onClose }) => {
-  const { todos, addTodo, toggleTodo, deleteTodo } = useTodos();
+  const { todos, toggleTodo, deleteTodo } = useTodos();
   const today = dateToday();
 
   const list = todos
     .filter((t) => t.date === today)
     .sort((a, b) => Number(a.completed) - Number(b.completed) || b.createdAt - a.createdAt);
 
-  const [showForm, setShowForm] = useState(false);
-  const [formDirty, setFormDirty] = useState(false);
+  const [showAdd, setShowAdd] = useState(false);
   const [pendingDelete, setPendingDelete] = useState(null);
-  const [pendingDiscard, setPendingDiscard] = useState(false);
-
-  const submit = async (data) => {
-    await addTodo(data);
-    setFormDirty(false);
-    setShowForm(false);
-  };
-
-  const requestCloseForm = () => {
-    if (formDirty) setPendingDiscard(true);
-    else setShowForm(false);
-  };
 
   const requestCloseModal = () => {
-    if (pendingDelete || pendingDiscard) return;
-    if (showForm && formDirty) { setPendingDiscard(true); return; }
+    if (pendingDelete) return;
     onClose && onClose();
-  };
-
-  const confirmDiscard = () => {
-    setShowForm(false);
-    setFormDirty(false);
-    setPendingDiscard(false);
   };
 
   return (
@@ -49,18 +29,9 @@ const Notebook = ({ open, onClose }) => {
         <p className="muted nb-summary">
           {list.length} for today · {list.filter((t) => t.completed).length} done
         </p>
-        {!showForm && (
-          <div className="nb-add">
-            <Button variant="primary" onClick={() => setShowForm(true)}>+ New task</Button>
-          </div>
-        )}
-        {showForm && (
-          <NotebookForm
-            onSubmit={submit}
-            onCancel={requestCloseForm}
-            onDirty={setFormDirty}
-          />
-        )}
+        <div className="nb-add">
+          <Button variant="primary" onClick={() => setShowAdd(true)}>+ New task</Button>
+        </div>
         <ul className="nb-list" aria-label="Today's tasks">
           {list.length === 0 && (
             <li className="nb-empty">Nothing yet — add your first task.</li>
@@ -86,6 +57,7 @@ const Notebook = ({ open, onClose }) => {
           ))}
         </ul>
       </Modal>
+      <AddTodoModal open={showAdd} onClose={() => setShowAdd(false)} />
       <ConfirmDialog
         open={!!pendingDelete}
         title="Vols eliminar aquesta tasca?"
@@ -99,15 +71,6 @@ const Notebook = ({ open, onClose }) => {
           setPendingDelete(null);
           if (id) deleteTodo(id);
         }}
-      />
-      <ConfirmDialog
-        open={pendingDiscard}
-        title="Descartar canvis?"
-        message="Hi ha canvis sense guardar al formulari."
-        cancelLabel="Seguir editant"
-        confirmLabel="Descartar"
-        onCancel={() => setPendingDiscard(false)}
-        onConfirm={confirmDiscard}
       />
     </>
   );

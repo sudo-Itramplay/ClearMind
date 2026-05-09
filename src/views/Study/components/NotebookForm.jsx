@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Button from '../ui/Button';
-import { dateToday } from '../../data/mockDB';
+import Button from '../../../components/ui/Button';
+import { dateToday } from '../../../data/mockDB';
 
 const PRIORITIES = ["low", "normal", "high"];
 

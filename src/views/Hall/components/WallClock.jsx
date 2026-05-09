@@ -1,5 +1,5 @@
 import React from 'react';
-import { useClock } from '../../hooks/useClock';
+import { useClock } from '../../../hooks/useClock';
 
 const fmtClock = (now) => {
   const h = now.getHours();

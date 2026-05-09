@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import TimerRing from './TimerRing';
-import Button from '../ui/Button';
-import ConfirmDialog from '../ui/ConfirmDialog';
-import { useStopwatch } from '../../hooks/useStopwatch';
+import Button from '../../../components/ui/Button';
+import ConfirmDialog from '../../../components/ui/ConfirmDialog';
+import { useStopwatch } from '../../../hooks/useStopwatch';
 
 const GOAL_PRESETS = [30, 60, 90, 120]; // minutes
 const DEFAULT_GOAL = 60 * 60; // seconds

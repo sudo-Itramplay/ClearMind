@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import TimerRing from './TimerRing';
-import Button from '../ui/Button';
-import ConfirmDialog from '../ui/ConfirmDialog';
-import { useTimer } from '../../hooks/useTimer';
-import { useSoundCtx } from '../../context/SoundContext';
+import Button from '../../../components/ui/Button';
+import ConfirmDialog from '../../../components/ui/ConfirmDialog';
+import { useTimer } from '../../../hooks/useTimer';
+import { useSoundCtx } from '../../../context/SoundContext';
 
 const PRESETS = [15, 25, 45, 60];
 

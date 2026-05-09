@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import BackButton from '../ui/BackButton';
+import BackButton from '../../components/ui/BackButton';
 import { useTodos } from '../../context/TodoContext';
 import { dateToday } from '../../data/mockDB';
-import CorkBoard from './CorkBoard';
-import { POSTIT_SLOTS } from './Postit';
-import Notebook from './Notebook';
-import Watch from './Watch';
+import CorkBoard from './components/CorkBoard';
+import { POSTIT_SLOTS } from './components/Postit';
+import Notebook from './components/Notebook';
+import Watch from './components/Watch';
+import './style/study.css';
 
 const DROP_ANIM_MS = 600;
 

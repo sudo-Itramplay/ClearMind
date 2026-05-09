@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSoundCtx } from '../../context/SoundContext';
+import { useSoundCtx } from '../../../context/SoundContext';
 
 const Door = ({ kind, label, glowColor, onClick }) => {
   const { play } = useSoundCtx();
