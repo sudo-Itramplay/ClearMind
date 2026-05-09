@@ -29,22 +29,11 @@ const Day = ({ day, isOpen, onToggle }) => {
     };
   }, [isOpen, onToggle]);
 
-  if (day.isFuture) {
-    return (
-      <div className="day">
-        <span
-          className="sphere sphere-future"
-          aria-hidden="true"
-          title={fmtDate(day.key)}
-        />
-      </div>
-    );
-  }
-
   const sphereCls = [
     "sphere",
     `sphere-${day.level}`,
     day.isToday ? "today" : "",
+    day.isPast ? "past" : "",
     day.allDone ? "all-done" : "",
     isOpen ? "open" : "",
   ].join(" ").trim();
@@ -57,6 +46,7 @@ const Day = ({ day, isOpen, onToggle }) => {
         type="button"
         className={sphereCls}
         aria-label={aria}
+        aria-current={day.isToday ? "date" : undefined}
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         onClick={onToggle}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useTodos } from '../context/AppContext';
-import { useCalendarDays } from '../hooks/useCalendarDays';
+import { useTodos } from '../../context/TodoContext';
+import { useCalendarDays } from '../../hooks/useCalendarDays';
 import Day from './Day';
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -15,7 +15,7 @@ const LEGEND = [
 
 const Calendar = () => {
   const { todos, isLoading } = useTodos();
-  const { days, meanPending } = useCalendarDays(todos);
+  const { days, meanPending, totalCells } = useCalendarDays(todos);
   const [openKey, setOpenKey] = useState(null);
   const now = new Date();
 
@@ -28,9 +28,9 @@ const Calendar = () => {
       <div className="calendar-days" aria-hidden="true">
         {DOW.map((d) => <span key={d}>{d}</span>)}
       </div>
-      <div className="calendar-grid" role="group" aria-label="Daily activity for the past five weeks">
+      <div className="calendar-grid" role="group" aria-label="Daily activity: last week, this week, next two weeks">
         {isLoading
-          ? Array.from({ length: 35 }).map((_, i) => (
+          ? Array.from({ length: totalCells }).map((_, i) => (
               <div key={i} className="day"><span className="sphere sphere-none" aria-hidden="true" /></div>
             ))
           : days.map((d) => (

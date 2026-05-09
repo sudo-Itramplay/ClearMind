@@ -59,6 +59,37 @@
   --shadow-lg: 0 8px 24px rgba(60, 40, 20, 0.25);
   --glow-amber: 0 0 40px 10px rgba(212, 165, 116, 0.30);
   --glow-teal:  0 0 60px 20px rgba(90, 138, 140, 0.40);
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+
+  /* Motion */
+  --duration-fast: 200ms;
+  --duration-base: 400ms;
+  --duration-slow: 600ms;
+  --ease-standard: var(--ease-standard);
+  --ease-spring: cubic-bezier(.22, 1.16, .36, 1);
+
+  /* Layering */
+  --z-base: 1;
+  --z-floor: 2;
+  --z-room: 3;
+  --z-back: 40;
+  --z-toggle: 50;
+  --z-modal: 100;
+  --z-pills: 1000;
+
+  /* Component sizing */
+  --sphere-size: 22px;
+  --sphere-gap: 8px;
+  --door-w: 160px;
+  --door-h: 200px;
+  --ring-size: 160px;
+  --pill-h: 24px;
+  --header-pill-top: 12px;
 }
 
 * { box-sizing: border-box; }
@@ -139,6 +170,17 @@ button { font-family: inherit; }
 }
 .btn-ghost:hover { background: rgba(245,230,211,0.08); border-color: rgba(245,230,211,0.6); transform: translateY(-1px); }
 
+/* Ghost button on light surfaces (e.g. inside the cream Modal) — overrides
+   the dark-bg colors so it stays legible on cream. */
+.btn-ghost.btn-ghost-light {
+  color: var(--text-body);
+  border-color: rgba(74,55,40,0.25);
+}
+.btn-ghost.btn-ghost-light:hover {
+  background: rgba(74,55,40,0.06);
+  border-color: rgba(74,55,40,0.45);
+}
+
 .btn-pill { border-radius: 999px; padding: 0.5rem 1.1rem; min-height: 40px; font-size: 0.95rem; }
 
 .btn-danger {
@@ -179,7 +221,7 @@ button { font-family: inherit; }
   width: calc(100% - 2rem);
   box-shadow: var(--shadow-lg), 0 0 0 1px rgba(60,40,20,0.06);
   position: relative;
-  animation: rise 280ms cubic-bezier(.22,1.16,.36,1);
+  animation: rise 280ms var(--ease-spring);
   max-height: 92vh;
   overflow: auto;
 }
@@ -222,21 +264,24 @@ button { font-family: inherit; }
    ============================================================ */
 .app { width: 100vw; height: 100vh; overflow: hidden; position: relative; }
 
+/* Each room mounts inside this; rooms are absolutely positioned to fill it. */
+.room-stage { position: absolute; inset: 0; }
+
 /* Floating room pills (Study — Hall — Meditate) */
 .room-pills {
   position: fixed;
-  top: 12px;
+  top: var(--header-pill-top);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   gap: 8px;
-  z-index: 1000;
+  z-index: var(--z-pills);
 }
 .room-pills button {
   min-width: 40px;
-  height: 24px;
+  height: var(--pill-h);
   padding: 0 12px;
-  border-radius: 9999px;
+  border-radius: var(--radius-pill);
   border: none;
   background: var(--wood-mid);
   color: var(--cream);
@@ -300,7 +345,7 @@ button { font-family: inherit; }
 /* ============================================================
    Page transitions
    ============================================================ */
-.page-anim { animation: pageIn 400ms cubic-bezier(0.4, 0, 0.2, 1); }
+.page-anim { animation: pageIn 400ms var(--ease-standard); }
 @keyframes pageIn {
   from { opacity: 0; transform: scale(1.02); }
   to   { opacity: 1; transform: scale(1); }
@@ -351,8 +396,8 @@ button { font-family: inherit; }
 }
 .calendar-days {
   display: grid;
-  grid-template-columns: repeat(7, 22px);
-  gap: 8px;
+  grid-template-columns: repeat(7, var(--sphere-size));
+  gap: var(--sphere-gap);
   justify-content: center;
   margin-bottom: 6px;
   color: var(--amber-soft);
@@ -381,7 +426,8 @@ button { font-family: inherit; }
 /* Day wrapper inside the calendar grid (anchor for popover) */
 .day {
   position: relative;
-  width: 22px; height: 22px;
+  width: var(--sphere-size);
+  height: var(--sphere-size);
 }
 .day .sphere { width: 100%; height: 100%; }
 
@@ -430,9 +476,9 @@ button { font-family: inherit; }
 .over-display { color: #8B4513; font-family: "JetBrains Mono", monospace; font-size: 0.8rem; }
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(7, 22px);
-  grid-auto-rows: 22px;
-  gap: 8px;
+  grid-template-columns: repeat(7, var(--sphere-size));
+  grid-auto-rows: var(--sphere-size);
+  gap: var(--sphere-gap);
   justify-content: center;
   padding: 16px 22px;
   background:
@@ -444,13 +490,14 @@ button { font-family: inherit; }
 }
 /* Sphere — explicit state classes that match the legend */
 .sphere {
-  width: 22px; height: 22px;
+  width: var(--sphere-size);
+  height: var(--sphere-size);
   border-radius: 50%;
   border: none;
   cursor: pointer;
   padding: 0;
   position: relative;
-  transition: box-shadow 400ms ease, background 400ms ease, transform 200ms ease;
+  transition: box-shadow var(--duration-base) ease, background var(--duration-base) ease, transform var(--duration-fast) ease;
   background: #3D2E20;
   box-shadow:
     inset -2px -2px 4px rgba(0,0,0,0.5),
@@ -484,14 +531,6 @@ button { font-family: inherit; }
     inset 2px 2px 4px rgba(255,255,255,0.30),
     0 0 14px rgba(245,166,35, 0.70);
 }
-.sphere-future {
-  background: transparent;
-  border: 1px dashed rgba(245,230,211,0.18);
-  box-shadow: none;
-  cursor: default;
-  opacity: 0.6;
-}
-
 /* Subtle marker for fully-done past days so they aren't indistinguishable
    from days with no tasks. Tiny dot, low-saturation green, no glow. */
 .sphere.all-done::after {
@@ -505,22 +544,47 @@ button { font-family: inherit; }
   pointer-events: none;
 }
 
+/* "Today" gets an unmistakable amber ring + scale + always-on pulse so it
+   stands out from intensity, regardless of how many tasks the day has. */
 .sphere.today {
-  outline: 2px solid rgba(255,255,255,0.6);
-  outline-offset: 1px;
+  outline: 2.5px solid var(--amber-glow);
+  outline-offset: 3px;
+  transform: scale(1.12);
+  z-index: 3;
+  animation: todayPulse 2.2s ease-in-out infinite;
 }
-.sphere.today.sphere-low,
-.sphere.today.sphere-med,
-.sphere.today.sphere-high { animation: spherePulse 2.4s ease-in-out infinite; }
+.sphere.today::before {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 165, 116, 0.25);
+  pointer-events: none;
+}
 
-@keyframes spherePulse {
-  0%, 100% { filter: brightness(1); }
-  50%      { filter: brightness(1.25); }
+@keyframes todayPulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(212, 165, 116, 0.45);
+    outline-color: var(--amber-glow);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(212, 165, 116, 0.85);
+    outline-color: #ffe1ad;
+  }
 }
 
 .sphere:hover { transform: scale(1.18); filter: brightness(1.15); z-index: 2; }
-.sphere.sphere-future:hover { transform: none; filter: none; }
 .sphere.open { transform: scale(1.25); z-index: 12; }
+
+/* Past days are de-emphasised — already happened, lower priority than the
+   actionable today/future. Today still pulses, hover lifts them back to
+   readable so the popover stays usable. */
+.sphere.past {
+  opacity: 0.5;
+  filter: saturate(0.5);
+}
+.sphere.past:hover,
+.sphere.past.open { opacity: 0.92; filter: saturate(0.85) brightness(1.15); }
 .sphere:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
 /* Legend swatches mirror the sphere states */
@@ -636,8 +700,8 @@ button { font-family: inherit; }
 /* Single unified door — only --door-glow varies between instances */
 .door {
   position: relative;
-  width: 160px;
-  height: 200px;
+  width: var(--door-w);
+  height: var(--door-h);
   background: linear-gradient(180deg, var(--wood-mid), var(--wood-dark));
   border-radius: 6px 6px 2px 2px;
   box-shadow:
@@ -646,7 +710,7 @@ button { font-family: inherit; }
     var(--shadow-lg);
   transform-origin: center center;
   transform-style: preserve-3d;
-  transition: transform 500ms cubic-bezier(.22,1.16,.36,1);
+  transition: transform 500ms var(--ease-spring);
   cursor: pointer;
   border: none;
   padding: 0;
@@ -683,7 +747,21 @@ button { font-family: inherit; }
   transition: box-shadow 400ms ease;
 }
 
-.door-wrap:hover .door { transform: rotateY(-18deg); }
+/* Hallway perspective: each door sits on a side wall, slightly inset toward
+   the camera. Study (left wall) rotates around its right edge; Meditate
+   (right wall) mirrors it. Hover swings each door open further. */
+.door-wrap-study .door {
+  transform: rotateY(14deg);
+  transform-origin: left center;
+}
+.door-wrap-study:hover .door { transform: rotateY(26deg); }
+
+.door-wrap-meditate .door {
+  transform: rotateY(-14deg);
+  transform-origin: left center;
+}
+.door-wrap-meditate:hover .door { transform: rotateY(26deg); }
+
 .door-wrap:hover .door-glow {
   box-shadow: 0 0 60px 14px var(--door-glow, rgba(212,165,116,0.55));
 }
@@ -888,7 +966,7 @@ button { font-family: inherit; }
   100% { transform: scale(1) rotate(var(--r,0deg)); }
 }
 .postit.dropping {
-  animation: drop 480ms cubic-bezier(.22,1.16,.36,1);
+  animation: drop 480ms var(--ease-spring);
 }
 @keyframes drop {
   0%   { transform: translateY(-180px) rotate(0deg); opacity: 0; }
@@ -906,6 +984,12 @@ button { font-family: inherit; }
 .pt-prio.high   { background: #c0392b; }
 .pt-prio.normal { background: #d4a02e; }
 .pt-prio.low    { background: #6e9e7c; }
+
+/* When a priority dot is used outside of a postit (in lists, forms, etc.). */
+.pt-prio.pt-prio-static {
+  position: static;
+  display: inline-block;
+}
 
 /* Desk */
 .desk {
@@ -967,8 +1051,8 @@ button { font-family: inherit; }
 }
 .timer-ring {
   position: relative;
-  width: 160px;
-  height: 160px;
+  width: var(--ring-size);
+  height: var(--ring-size);
 }
 .timer-ring svg { display: block; width: 100%; height: 100%; }
 .timer-center {
@@ -995,6 +1079,37 @@ button { font-family: inherit; }
   0%, 100% { text-shadow: 0 0 12px rgba(245,230,211,0.45); }
   50% { text-shadow: 0 0 24px rgba(245,230,211,0.85); }
 }
+
+/* Stopwatch goal-reached: dim the ring + text. Pre-goal state is the default
+   (full saturation, bright text); post-goal is pale. */
+.timer-ring.timer-paled { opacity: 0.55; filter: saturate(0.55); }
+.timer-ring.timer-paled .timer-time { color: var(--text-muted); text-shadow: none; }
+
+/* Goal preset row (Stopwatch) */
+.goal-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.goal-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-right: 2px;
+}
+
+/* Stopwatch status line ("23:00 to goal" / "+05:00 past goal") */
+.stopwatch-status {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  min-height: 1.2em;
+}
+.stopwatch-status.reached { color: var(--amber-soft); }
 
 .tabset {
   display: inline-flex;
@@ -1266,6 +1381,38 @@ button { font-family: inherit; }
 }
 .nb-del:hover { color: var(--accent-danger); background: rgba(199,13,11,0.06); }
 
+/* Notebook (modal-internal) layout */
+.nb-summary { margin-top: 4px; }
+.nb-add { margin-top: 14px; }
+.nb-empty {
+  justify-content: center;
+  color: var(--text-muted);
+}
+.nb-form-actions { display: flex; gap: 10px; margin-top: 4px; }
+.nb-prio { margin-top: 6px; }
+
+/* Empty state for the corkboard */
+.corkboard-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--text-muted);
+  font-family: "Crimson Pro", serif;
+  font-size: 1.1rem;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+/* Meditate action row */
+.med-actions { display: flex; gap: 10px; }
+
+/* Loader wrapper */
+.loader-wrap { text-align: center; }
+
+/* Timer progress arc transition lives on the SVG circle itself */
+.timer-progress { transition: stroke-dashoffset 0.4s linear; }
+
 /* Loading sphere */
 .loader {
   width: 36px; height: 36px;
@@ -1282,74 +1429,149 @@ button { font-family: inherit; }
 /* ============================================================
    Responsive
    ============================================================ */
+/* ============================================================
+   PLAIN MODE — collapses the diorama into a clean stacked UI
+   ============================================================
+   How responsive CSS works here: rules outside @media apply at all sizes
+   (the diorama). Rules inside @media (max-width: N) only activate when the
+   viewport is N pixels or narrower — they override the diorama with a
+   simpler layout. We target ≤1024px for tablets/mobile so anything wider
+   (laptop or desktop) keeps the full diorama. */
 @media (max-width: 1024px) {
-  .door { width: 150px; height: 190px; }
-  .corkboard { max-height: 320px; }
-}
-
-@media (max-width: 640px) {
-  html, body, #root { font-size: 16px; }
-
-  .room-pills { top: 8px; }
-  .sound-toggle, .back-btn { top: 48px; }
-
-  /* Hall mobile: stacked cards */
+  /* Hall — vertical stack, no skewed floor, doors as tappable cards */
   .hall {
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto auto 1fr;
     overflow-y: auto;
   }
-  .hall-top { padding: 70px 16px 8px; grid-template-columns: 1fr; gap: 14px; }
+  .hall-grain { opacity: 0.3; }
+  .hall-top {
+    padding: 56px 24px 16px;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
   .calendar { grid-column: 1; }
-  .clock { grid-column: 1; justify-self: center; }
+  .clock {
+    grid-column: 1;
+    justify-self: center;
+    padding: 0;
+  }
   .clock svg { display: none; }
   .clock::after {
     content: attr(data-time);
-    font-family: "JetBrains Mono", monospace;
-    font-size: 2rem;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 1.6rem;
     color: var(--cream);
     letter-spacing: 0.08em;
   }
-  .calendar-grid { grid-template-columns: repeat(7, 26px); grid-auto-rows: 26px; }
 
   .hall-mid {
     grid-template-columns: 1fr;
     gap: 14px;
-    padding: 12px 16px 1.5rem;
+    padding: 16px 24px;
+    perspective: none;
   }
-  .door {
-    width: 100%; max-width: 360px; height: 110px;
-    transform: none !important;
-    border-radius: 14px;
-    display: grid; place-items: center;
-  }
-  .door::before { inset: 10px; }
+  .door-wrap { gap: 8px; perspective: none; }
   .door-wrap-study, .door-wrap-meditate { justify-self: center; }
+  .door {
+    width: min(100%, 420px);
+    height: 64px;
+    transform: none !important;
+    transform-origin: center !important;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--wood-mid), var(--wood-dark));
+    box-shadow: var(--shadow-md);
+  }
+  .door::before { inset: 6px; border-radius: 8px; }
+  .door::after { display: none; }       /* hide door knob */
+  .door-glow { display: none; }          /* hide glow halo */
+  .plaque { font-size: 0.85rem; padding: 4px 14px; }
   .table { display: none; }
   .hall-floor-wrap { display: none; }
 
-  /* Study mobile */
-  .study-grid { grid-template-rows: 1fr auto; }
-  .corkboard { max-height: none; height: auto; padding: 12px; }
-  .corkboard {
-    display: flex; flex-direction: column; gap: 10px;
-    align-items: stretch;
+  /* Study — single column, postits as a stacked list */
+  .study-room { overflow-y: auto; }
+  .study-grid {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 100%;
+    grid-template-rows: none;
+    gap: 18px;
+    padding: 56px 16px 24px;
   }
+  .corkboard-area { padding: 0; display: block; }
+  .corkboard {
+    position: static;
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    max-height: none;
+    margin: 0 auto;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .corkboard-empty { position: static; padding: 24px; height: auto; }
   .postit {
     position: static !important;
     width: 100% !important;
     transform: none !important;
     min-height: auto;
+    padding: 12px 14px;
+    border-radius: 10px;
+    text-align: left;
   }
-  .desk { grid-template-columns: 1fr; gap: 16px; padding: 1rem 16px; }
-  .notebook { justify-self: center; width: 100%; max-width: 360px; }
-  .timer-block { justify-self: center; }
-  .timer-ring { width: 220px; height: 220px; }
+  .postit::before { display: none; }
+  .postit:hover { transform: translateY(-1px) !important; }
 
-  /* Meditate mobile */
-  .meditate-room { grid-template-rows: 1fr auto; }
-  .breath { width: 80vw; max-width: 280px; height: 80vw; max-height: 280px; }
-  .duration-row { flex-direction: column; align-items: stretch; }
-  .dur-btn { width: 100%; }
+  .desk {
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: 18px 16px;
+  }
+  .notebook {
+    justify-self: center;
+    width: 100%;
+    max-width: 420px;
+    height: 72px;
+    border-radius: 10px;
+  }
+  .timer-block { justify-self: center; width: 100%; align-items: center; }
+
+  /* Meditate — drop floor + ambient glow, keep the breathing circle */
+  .meditate-room {
+    grid-template-rows: 1fr;
+    overflow-y: auto;
+  }
+  .meditate-floor-wrap { display: none; }
+  .meditate-grain { opacity: 0.3; }
+  .amb-glow { opacity: 0.5; }
+  .meditate-stage { padding: 56px 16px 24px; }
+  .breath { width: min(70vw, 280px); height: min(70vw, 280px); }
+}
+
+/* ============================================================
+   MOBILE-ONLY refinements stacked on top of plain mode
+   ============================================================ */
+@media (max-width: 640px) {
+  html, body, #root { font-size: 16px; }
+  .room-pills { top: 8px; }
+  .sound-toggle, .back-btn { top: 48px; }
+
+  /* Bigger spheres for touch targets */
+  .calendar-grid { grid-template-columns: repeat(7, 28px); grid-auto-rows: 28px; }
+  .calendar-days { grid-template-columns: repeat(7, 28px); }
+  .day { width: 28px; height: 28px; }
+
+  .timer-ring { width: 200px; height: 200px; }
+  .breath { width: min(80vw, 280px); height: min(80vw, 280px); }
 }
 
 /* ============================================================

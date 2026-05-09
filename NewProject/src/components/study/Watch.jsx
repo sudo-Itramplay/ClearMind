@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import Timer from './Timer';
 import Stopwatch from './Stopwatch';
 
-// Registry of available watch modes. Add new entries here to expose new modes
-// (e.g. Pomodoro, Interval) — Watch will pick them up automatically.
+// Registry of watch modes. Add new entries here to expose new modes
+// (e.g. Pomodoro, Interval) — Watch picks them up automatically.
 export const WATCH_MODES = {
   timer:     { label: "Timer",     Component: Timer },
   stopwatch: { label: "Stopwatch", Component: Stopwatch },
@@ -11,9 +11,8 @@ export const WATCH_MODES = {
 
 const Watch = ({ defaultMode = "timer" }) => {
   const modeKeys = Object.keys(WATCH_MODES);
-  const [mode, setMode] = useState(
-    WATCH_MODES[defaultMode] ? defaultMode : modeKeys[0]
-  );
+  const initial = WATCH_MODES[defaultMode] ? defaultMode : modeKeys[0];
+  const [mode, setMode] = useState(initial);
   const Active = WATCH_MODES[mode] && WATCH_MODES[mode].Component;
 
   return (

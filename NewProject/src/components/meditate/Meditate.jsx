@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useSoundCtx } from '../context/AppContext';
-import { Button, BackButton } from './UI';
+import React, { useEffect, useState } from 'react';
+import BackButton from '../ui/BackButton';
+import Button from '../ui/Button';
+import { useSoundCtx } from '../../context/SoundContext';
 
 const MEDITATION_MODES = {
   activation: {
@@ -8,10 +9,10 @@ const MEDITATION_MODES = {
     icon: "⚡",
     duration: 3,
     phases: [
-      { label: "Inhale",  duration: 2000 },
-      { label: "Hold",    duration: 1000 },
-      { label: "Exhale",  duration: 2000 },
-      { label: "Hold",    duration: 1000 },
+      { label: "Inhale", duration: 2000 },
+      { label: "Hold",   duration: 1000 },
+      { label: "Exhale", duration: 2000 },
+      { label: "Hold",   duration: 1000 },
     ],
   },
   anxiety: {
@@ -36,6 +37,9 @@ const MEDITATION_MODES = {
     ],
   },
 };
+
+const fmt = (s) =>
+  String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
 
 const Meditate = ({ go }) => {
   const [modeKey, setModeKey] = useState("anxiety");
@@ -75,7 +79,6 @@ const Meditate = ({ go }) => {
     setRunning(true);
   };
   const remaining = Math.max(0, mode.duration * 60 - elapsed);
-  const fmt = (s) => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
 
   return (
     <div className="meditate-room page-anim">
@@ -86,15 +89,20 @@ const Meditate = ({ go }) => {
         <div className="med-stack">
           <div className="mode-row" role="group" aria-label="Breathing mode">
             {Object.entries(MEDITATION_MODES).map(([k, m]) => (
-              <button key={k}
+              <button
+                key={k}
                 className={"mode-btn " + k}
                 aria-pressed={modeKey === k}
-                onClick={() => setModeKey(k)}>
+                onClick={() => setModeKey(k)}
+              >
                 <span aria-hidden="true">{m.icon}</span> {m.label}
               </button>
             ))}
           </div>
-          <div className={"breath " + modeKey + (running ? "" : " paused") + (complete ? " complete" : "")} aria-hidden="true" />
+          <div
+            className={"breath " + modeKey + (running ? "" : " paused") + (complete ? " complete" : "")}
+            aria-hidden="true"
+          />
           <div className="breath-label" aria-live="polite">
             {complete
               ? (modeKey === "sleep" ? "Rest well…" : "Session Complete")
@@ -103,7 +111,7 @@ const Meditate = ({ go }) => {
           <div className="session-time" aria-live="polite">
             {complete ? `${mode.duration} min — well done` : `${fmt(remaining)} remaining`}
           </div>
-          <div style={{ display: "flex", gap: 10 }}>
+          <div className="med-actions">
             {!running && <Button variant="primary" onClick={start}>{complete ? "Begin Again" : "Start"}</Button>}
             {running && <Button variant="ghost" onClick={() => setRunning(false)}>Pause</Button>}
           </div>

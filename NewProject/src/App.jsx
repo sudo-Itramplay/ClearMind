@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { TodoProvider, SoundProvider, SoundToggle } from './context/AppContext';
-import Hall from './components/Hall';
-import Study from './components/Study';
-import Meditate from './components/Meditate';
+import React, { useEffect, useState } from 'react';
+import { TodoProvider } from './context/TodoContext';
+import { SoundProvider } from './context/SoundContext';
+import RoomPills from './components/ui/RoomPills';
+import SoundToggle from './components/ui/SoundToggle';
+import Hall from './components/hall/Hall';
+import Study from './components/study/Study';
+import Meditate from './components/meditate/Meditate';
 
 const ROUTES = ["hall", "study", "meditate"];
-const PILL_ORDER = ["study", "hall", "meditate"];
 
 const useHashRoute = () => {
   const get = () => {
@@ -22,29 +24,13 @@ const useHashRoute = () => {
   return [page, go];
 };
 
-const RoomPills = ({ page, go }) => (
-  <nav className="room-pills" aria-label="Rooms">
-    {PILL_ORDER.map((r) => (
-      <button
-        key={r}
-        type="button"
-        onClick={() => go(r)}
-        aria-current={page === r ? "page" : undefined}
-        aria-label={`Go to ${r}`}
-      >
-        {r}
-      </button>
-    ))}
-  </nav>
-);
-
 const Shell = () => {
   const [page, go] = useHashRoute();
   return (
     <div className="app">
       <RoomPills page={page} go={go} />
       <SoundToggle />
-      <div key={page} style={{ position: "absolute", inset: 0 }}>
+      <div key={page} className="room-stage">
         {page === "hall"     && <Hall go={go} />}
         {page === "study"    && <Study go={go} />}
         {page === "meditate" && <Meditate go={go} />}

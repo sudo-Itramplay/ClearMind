@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import TimerRing from './TimerRing';
-import { Button, ConfirmDialog } from './UI';
-import { useTimer } from '../hooks/useTimer';
-import { useSoundCtx } from '../context/AppContext';
+import Button from '../ui/Button';
+import ConfirmDialog from '../ui/ConfirmDialog';
+import { useTimer } from '../../hooks/useTimer';
+import { useSoundCtx } from '../../context/SoundContext';
 
 const PRESETS = [15, 25, 45, 60];
 
@@ -26,15 +27,21 @@ const Timer = () => {
       <TimerRing time={t.done ? "Done!" : fmtTime(t.remaining)} percent={t.percent} done={t.done} />
       <div className="preset-row" role="group" aria-label="Duration presets">
         {PRESETS.map((m) => (
-          <button key={m} type="button" className="preset"
+          <button
+            key={m}
+            type="button"
+            className="preset"
             aria-pressed={t.duration === m * 60}
-            onClick={() => t.setDuration(m * 60)}>{m}m</button>
+            onClick={() => t.setDuration(m * 60)}
+          >
+            {m}m
+          </button>
         ))}
       </div>
       <div className="timer-controls">
         {!t.running && <Button variant="primary" onClick={t.start}>{t.done ? "Restart" : "Start"}</Button>}
         {t.running && <Button variant="secondary" onClick={t.pause}>Pause</Button>}
-        <Button variant="ghost" style={{ color: "var(--text-on-dark)" }} onClick={handleReset}>Reset</Button>
+        <Button variant="ghost" onClick={handleReset}>Reset</Button>
       </div>
       <ConfirmDialog
         open={pendingReset}

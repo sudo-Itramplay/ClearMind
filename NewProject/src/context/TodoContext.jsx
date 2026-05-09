@@ -1,0 +1,44 @@
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { mockDB } from '../data/mockDB';
+
+const TodoCtx = createContext(null);
+
+export const useTodos = () => useContext(TodoCtx);
+
+export const TodoProvider = ({ children }) => {
+  const [todos, setTodos] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let alive = true;
+    mockDB.getTodos()
+      .then((d) => { if (alive) { setTodos(d); setLoading(false); } })
+      .catch((e) => { if (alive) { setError(e.message); setLoading(false); } });
+    return () => { alive = false; };
+  }, []);
+
+  const addTodo = async (data) => {
+    const n = await mockDB.addTodo(data);
+    setTodos((t) => [...t, n]);
+    return n;
+  };
+  const toggleTodo = async (id) => {
+    const u = await mockDB.toggleTodo(id);
+    setTodos((t) => t.map((x) => (x.id === id ? u : x)));
+  };
+  const deleteTodo = async (id) => {
+    await mockDB.deleteTodo(id);
+    setTodos((t) => t.filter((x) => x.id !== id));
+  };
+  const updateTodo = async (id, updates) => {
+    const u = await mockDB.updateTodo(id, updates);
+    setTodos((t) => t.map((x) => (x.id === id ? u : x)));
+  };
+
+  return (
+    <TodoCtx.Provider value={{ todos, isLoading, error, addTodo, toggleTodo, deleteTodo, updateTodo }}>
+      {children}
+    </TodoCtx.Provider>
+  );
+};

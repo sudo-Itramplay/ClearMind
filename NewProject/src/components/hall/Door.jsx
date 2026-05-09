@@ -1,10 +1,13 @@
 import React from 'react';
-import { useSoundCtx } from '../context/AppContext';
+import { useSoundCtx } from '../../context/SoundContext';
 
 const Door = ({ kind, label, glowColor, onClick }) => {
   const { play } = useSoundCtx();
   const handleEnter = () => { try { play && play("creak"); } catch (e) {} };
-  const handleClick = () => { try { play && play("click"); } catch (e) {} onClick && onClick(); };
+  const handleClick = () => {
+    try { play && play("click"); } catch (e) {}
+    onClick && onClick();
+  };
   return (
     <div className={`door-wrap door-wrap-${kind}`} onMouseEnter={handleEnter}>
       <button
