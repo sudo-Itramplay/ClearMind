@@ -6,6 +6,7 @@ import CorkBoard from './components/CorkBoard';
 import { POSTIT_SLOTS } from './components/Postit';
 import Notebook from './components/Notebook';
 import Watch from './components/Watch';
+import { TodoEntryProvider } from './components/TodoEntryProvider';
 import './style/study.css';
 
 const DROP_ANIM_MS = 600;
@@ -36,26 +37,28 @@ const Study = ({ go }) => {
   }, [todays.map((t) => t.id).join(",")]);
 
   return (
-    <div className="study-room page-anim">
-      <BackButton onClick={() => go("hall")} />
-      <div className="study-grid">
-        <CorkBoard
-          tasks={todays}
-          isLoading={isLoading}
-          recentlyAddedId={recentlyAdded}
-          onToggle={toggleTodo}
-        />
-        <div className="desk">
-          <button className="notebook" onClick={() => setOpen(true)} aria-label="Open My Tasks notebook">
-            <span className="notebook-stitch" aria-hidden="true" />
-            <span className="notebook-label">My Tasks</span>
-            <span className="notebook-count">{todays.length}</span>
-          </button>
-          <Watch defaultMode="timer" />
+    <TodoEntryProvider>
+      <div className="study-room page-anim">
+        <BackButton onClick={() => go("hall")} />
+        <div className="study-grid">
+          <CorkBoard
+            tasks={todays}
+            isLoading={isLoading}
+            recentlyAddedId={recentlyAdded}
+            onToggle={toggleTodo}
+          />
+          <div className="desk">
+            <button className="notebook" onClick={() => setOpen(true)} aria-label="Open My Tasks notebook">
+              <span className="notebook-stitch" aria-hidden="true" />
+              <span className="notebook-label">My Tasks</span>
+              <span className="notebook-count">{todays.length}</span>
+            </button>
+            <Watch defaultMode="timer" />
+          </div>
         </div>
+        <Notebook open={open} onClose={() => setOpen(false)} />
       </div>
-      <Notebook open={open} onClose={() => setOpen(false)} />
-    </div>
+    </TodoEntryProvider>
   );
 };
 

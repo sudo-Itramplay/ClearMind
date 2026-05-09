@@ -65,30 +65,52 @@ Genera els fitxers optimitzats a la carpeta `dist/`.
 ```
 src/
 ├── index.js                      # Punt d'entrada
-├── App.jsx                       # Shell amb hash routing
+├── App.jsx                       # Shell amb hash routing + KeymapProvider
 ├── context/
 │   ├── TodoContext.jsx           # Estat global de tasques (CRUD)
-│   └── SoundContext.jsx          # Sistema de so opt-in
+│   ├── SoundContext.jsx          # Sistema de so opt-in
+│   └── ToastContext.jsx          # Notificacions efímeres
 ├── components/
-│   ├── ui/                       # Primitives reutilitzables
-│   │   ├── Button.jsx
-│   │   ├── Modal.jsx
-│   │   ├── ConfirmDialog.jsx
-│   │   ├── RoomPills.jsx         # Navegació (3 pills)
-│   │   └── SoundToggle.jsx
-│   ├── hall/                     # 🏠 Sala principal
+│   └── ui/                       # Primitives reutilitzables
+│       ├── Button.jsx
+│       ├── Modal.jsx
+│       ├── ConfirmDialog.jsx
+│       ├── RoomPills.jsx         # Navegació (3 pills)
+│       └── SoundToggle.jsx
+├── views/                        # Una carpeta per sala
+│   ├── Hall/                     # 🏠 Sala principal
 │   │   ├── Hall.jsx
-│   │   ├── Calendar.jsx          # Calendari amb esferes reactives
-│   │   ├── WallClock.jsx         # Rellotge SVG analògic
-│   │   └── Door.jsx              # Porta reutilitzable (3D)
-│   ├── study/                    # 📚 Sala d'estudi
+│   │   ├── components/
+│   │   │   ├── Calendar.jsx      # Calendari amb esferes reactives
+│   │   │   ├── WallClock.jsx     # Rellotge SVG analògic
+│   │   │   └── Door.jsx          # Porta amb icona en mòbil
+│   │   └── style/hall.css
+│   ├── Study/                    # 📚 Sala d'estudi
 │   │   ├── Study.jsx
-│   │   ├── CorkBoard.jsx         # Pissarra amb post-its
-│   │   ├── Notebook.jsx          # Quadern de tasques
-│   │   ├── Watch.jsx             # Timer / Cronòmetre
-│   │   └── ...
-│   └── meditate/                 # 🧘 Sala de meditació
-│       └── Meditate.jsx          # 3 modes de respiració
+│   │   ├── components/
+│   │   │   ├── CorkBoard.jsx
+│   │   │   ├── Postit.jsx
+│   │   │   ├── AddTodo.jsx
+│   │   │   ├── AddTodoModal.jsx
+│   │   │   ├── NotebookForm.jsx
+│   │   │   ├── Notebook.jsx
+│   │   │   ├── Watch.jsx
+│   │   │   └── TodoEntryProvider.jsx  # orquestra modal quick / full
+│   │   └── style/study.css
+│   └── Meditate/                 # 🧘 Sala de meditació
+│       ├── Meditate.jsx          # 3 modes de respiració
+│       └── style/meditate.css
+├── features/                     # Capacitats reutilitzables i autocontingudes
+│   ├── quickAdd/                 # Veure GUIDES/QUICK-ADD.md
+│   │   ├── config/quickAddConfig.js
+│   │   ├── domain/{clock,tokenizer,priorityResolver,dateResolver,parseQuickInput}.js
+│   │   ├── ui/{useQuickAdd,QuickAddInput,QuickAddModal}.{js,jsx}
+│   │   └── index.js
+│   └── keybindings/              # Veure GUIDES/KEYBINDINGS.md
+│       ├── config/keymapConfig.js
+│       ├── domain/{eventGuards,matcher}.js
+│       ├── ui/{KeymapProvider,KeymapDefaults,Cheatsheet,CheatsheetButton}.jsx
+│       └── index.js
 ├── hooks/
 │   ├── useTimer.js
 │   ├── useStopwatch.js
@@ -102,6 +124,10 @@ src/
     └── globals.css               # Sistema de disseny complet
 ```
 
+> Les carpetes sota `features/` són **autocontingudes i SOLID-friendly**:
+> `config/` (la perilla editable), `domain/` (lògica pura) i `ui/` (React).
+> Vegeu les guies enllaçades més avall per a detalls i receptes d'extensió.
+
 ---
 
 ## ✨ Funcionalitats
@@ -114,7 +140,8 @@ src/
 
 ### 📚 Study — Sala d'Estudi
 - **Pissarra de suro**: Post-its de colors (groc, rosa, menta) que representen les tasques d'avui.
-- **Quadern de tasques**: Formulari per afegir noves tasques amb prioritat i data.
+- **Quadern de tasques**: Formulari complet per afegir tasques amb prioritat i data (s'obre fent clic al `+` del tauler).
+- **Quick Add (tecla <kbd>Q</kbd>)**: Entrada d'una sola línia, estil Todoist, amb paraules clau per a prioritat (`p1`–`p4`) i data (`today`, `tmrw`, `mn`–`su`, `nxmn`–`nxsu`). Inclou *cheat-sheet* desplegable. Veure 📖 [QUICK-ADD.md](GUIDES/QUICK-ADD.md).
 - **Timer**: Compte enrere amb presets (15, 25, 45, 60 min) i anell de progrés SVG.
 - **Cronòmetre**: Amb temps objectiu configurable. Canvia de color quan se supera l'objectiu.
 - **Sons**: So suau al completar una tasca, so de campana quan el timer acaba.
@@ -140,12 +167,24 @@ Confirmació elegant per a accions destructives:
 Aquest projecte segueix les directrius **WCAG 2.1 AA**:
 
 - ✅ **Navegació per teclat** completa (Tab, Enter, Escape, fletxes)
+- ✅ **Dreceres globals estil Vim** — <kbd>g</kbd>+<kbd>h</kbd>/<kbd>s</kbd>/<kbd>m</kbd> per canviar de sala, <kbd>j</kbd>/<kbd>k</kbd>/<kbd>g</kbd><kbd>g</kbd>/<kbd>G</kbd> per a scroll, <kbd>q</kbd> per a Quick Add, <kbd>?</kbd> per a la fitxa d'ajuda flotant. Veure 📖 [KEYBINDINGS.md](GUIDES/KEYBINDINGS.md).
+- ✅ **Botó d'ajuda flotant** (`?` a baix a la dreta) sempre visible
 - ✅ **Anells de focus** visibles en tots els elements interactius
 - ✅ **ARIA labels** per a lectors de pantalla
 - ✅ **Contrasts** ≥ 4.5:1 per a text
 - ✅ **Targets tàctils** ≥ 48px en mòbil
 - ✅ **`prefers-reduced-motion`** respectat (animacions desactivades)
 - ✅ **Font base 18px** per a millor llegibilitat (TDAH-friendly)
+
+---
+
+## 📚 Guies i documentació
+
+| Guia | Contingut |
+|---|---|
+| 📖 [GUIA-ESTIL.md](GUIDES/GUIA-ESTIL.md) | Sistema de disseny: colors, tipografia, components, animacions |
+| ⚡ [QUICK-ADD.md](GUIDES/QUICK-ADD.md) | Entrada ràpida de tasques: paraules clau, arquitectura, com afegir-ne de noves |
+| ⌨️ [KEYBINDINGS.md](GUIDES/KEYBINDINGS.md) | Dreceres de teclat globals: vim motions, registre de handlers, com afegir bindings |
 
 ---
 
@@ -190,10 +229,10 @@ Aquest projecte segueix les directrius **WCAG 2.1 AA**:
 ## 🧪 Proves Recomanades
 
 1. **Hall**: Completa tasques a l'estudi i observa com el calendari actualitza les esferes en temps real.
-2. **Study**: Afegeix tasques, marca-les com a fetes (escolta el so), prova el cronòmetre amb temps objectiu.
+2. **Study**: Afegeix tasques amb el formulari complet (clic al `+`) i amb Quick Add (<kbd>Q</kbd>). Prova frases com `Llegir capítol 4 p1 nxmn` i comprova el toast de confirmació.
 3. **Meditate**: Canvia entre els 3 modes de respiració i comprova els diferents cicles.
-4. **Teclat**: Navega tota l'aplicació sense ratolí (Tab, Enter, Escape).
-5. **Mòbil**: Redueix la finestra a < 640px i verifica que tot és usable.
+4. **Teclat**: Navega tota l'aplicació sense ratolí — <kbd>?</kbd> obre la fitxa de dreceres, <kbd>g</kbd>+<kbd>h/s/m</kbd> canvia de sala, <kbd>j</kbd>/<kbd>k</kbd> scroll. Tab, Enter i Escape continuen funcionant per als formularis.
+5. **Mòbil**: Redueix la finestra a < 640px i verifica que tot és usable, incloent les portes del Hall amb les noves icones (llibre / lotus).
 
 ---
 

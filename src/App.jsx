@@ -7,6 +7,13 @@ import SoundToggle from './components/ui/SoundToggle';
 import Hall from './views/Hall/Hall';
 import Study from './views/Study/Study';
 import Meditate from './views/Meditate/Meditate';
+import {
+  KeymapProvider,
+  KeymapDefaults,
+  Cheatsheet,
+  CheatsheetButton,
+  useKeyAction,
+} from './features/keybindings';
 
 const ROUTES = ["hall", "study", "meditate"];
 
@@ -27,15 +34,26 @@ const useHashRoute = () => {
 
 const Shell = () => {
   const [page, go] = useHashRoute();
+  const [helpOpen, setHelpOpen] = useState(false);
+
+  // Bindings whose dependencies live here register here. Anything tied to
+  // Study state (e.g. `q` -> openQuick) registers from inside Study.
+  useKeyAction("goHall",     () => go("hall"));
+  useKeyAction("goStudy",    () => go("study"));
+  useKeyAction("goMeditate", () => go("meditate"));
+  useKeyAction("toggleHelp", () => setHelpOpen((o) => !o));
+
   return (
     <div className="app">
       <RoomPills page={page} go={go} />
       <SoundToggle />
+      <CheatsheetButton onClick={() => setHelpOpen(true)} />
       <div key={page} className="room-stage">
         {page === "hall"     && <Hall go={go} />}
         {page === "study"    && <Study go={go} />}
         {page === "meditate" && <Meditate go={go} />}
       </div>
+      <Cheatsheet open={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>
   );
 };
@@ -44,7 +62,10 @@ const App = () => (
   <SoundProvider>
     <ToastProvider>
       <TodoProvider>
-        <Shell />
+        <KeymapProvider>
+          <KeymapDefaults />
+          <Shell />
+        </KeymapProvider>
       </TodoProvider>
     </ToastProvider>
   </SoundProvider>

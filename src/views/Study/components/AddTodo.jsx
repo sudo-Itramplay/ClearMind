@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import AddTodoModal from './AddTodoModal';
+import React from 'react';
+import { useTodoEntry } from './TodoEntryProvider';
 
 // Mirror Postit's POSITIONS so AddTodo lands on the same slot grid.
 const POSITIONS = [
@@ -10,7 +10,9 @@ const POSITIONS = [
 ];
 
 const AddTodo = ({ position = 0 }) => {
-  const [open, setOpen] = useState(false);
+  // Click goes to the guided full form (lower learning curve). Power users
+  // hit `Q` for the quick-add input — see TodoEntryProvider.
+  const { openFull } = useTodoEntry();
   const pos = POSITIONS[position % POSITIONS.length];
 
   const style = {
@@ -21,18 +23,15 @@ const AddTodo = ({ position = 0 }) => {
   };
 
   return (
-    <>
-      <button
-        type="button"
-        className="add-todo"
-        style={style}
-        aria-label="Add a new task"
-        onClick={() => setOpen(true)}
-      >
-        +
-      </button>
-      <AddTodoModal open={open} onClose={() => setOpen(false)} />
-    </>
+    <button
+      type="button"
+      className="add-todo"
+      style={style}
+      aria-label="Add a new task"
+      onClick={openFull}
+    >
+      +
+    </button>
   );
 };
 
