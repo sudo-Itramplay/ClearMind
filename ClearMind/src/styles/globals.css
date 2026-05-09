@@ -1,6 +1,27 @@
 /* ============================================================
    globals.css — Sistema de disseny base ClearMind
    Directives de Tailwind + Variables CSS + Textura de soroll
+
+   PALETA → MAPEIG DE NOMS (Poètic → Desenvolupador)
+   ----------------------------------------------------------
+   autumn-ember    → --color-accent-primary   (CTA principal, focus)
+   stone-brown     → --color-text-body        (text secundari, desc.)
+   dark-slate-grey → --color-surface-dark     (fons fosc, Hall)
+   dark-coffee     → --color-text-heading     (títols, èmfasi)
+   dark-goldenrod  → --color-accent-reward    (rècord, recompenses,
+                                                finalització timer)
+   brick-ember     → --color-accent-danger    (NOMÉS errors,
+                                                accions destructives)
+   teal            → --color-accent-calm      (èxit, respiració,
+                                                checkmarks)
+
+   ADHD Design Notes:
+   • Warm cream surfaces reduce blue-light overstimulation.
+   • No pure black — dark mode stays warm (espresso teal).
+   • accent-danger (red) is reserved for errors ONLY; never use
+     red for success/celebration to avoid anxiety triggers.
+   • accent-reward (amber) replaces red for timer-done flashes.
+   • prefers-reduced-motion respected for motion-sensitive users.
    ============================================================ */
 
 @tailwind base;
@@ -13,42 +34,63 @@
    paper, cartró, fusta clara, ceràmica.
    ------------------------------------------------------------ */
 :root {
-  /* Accents principals */
-  --accent-primary:       #AE5815;
-  --accent-primary-light: #D4956A;
-  --accent-primary-50:    #FDF5EE;
+  /* ── Accents principals ────────────────────────────── */
+  --color-accent-primary:       #AE5815;
+  --color-accent-primary-light: #D4956A;
+  --color-accent-primary-50:    #FDF5EE;
 
-  /* Neutrals càlids */
-  --surface-muted:  #57493B;
-  --base-dark:      #203E39;
-  --base-deep:      #3A271A;
+  --color-accent-reward:       #AE8204;
+  --color-accent-reward-light: #D9B84F;
 
-  /* Accents secundaris */
-  --accent-warm:       #AE8204;
-  --accent-warm-light: #D9B84F;
+  --color-accent-calm:       #3E8283;
+  --color-accent-calm-light: #7AB5B5;
 
-  --accent-critical:       #C70D0B;
-  --accent-critical-light: #E87878;
+  --color-accent-danger:       #C70D0B;
+  --color-accent-danger-light: #E87878;
 
-  --accent-calm:       #3E8283;
-  --accent-calm-light: #7AB5B5;
+  /* ── Neutrals càlids ───────────────────────────────── */
+  --color-text-body:    #57493B;
+  --color-surface-dark: #203E39;
+  --color-text-heading: #3A271A;
 
-  /* Superfícies — mode clar */
-  --surface-light:    #FBF7F0;
-  --surface-card:     #F5EDE3;
-  --surface-elevated: #FFFFFF;
+  /* ── Superfícies — mode clar ───────────────────────── */
+  --color-surface-base:    #FBF7F0;   /* fons de pàgina */
+  --color-surface-card:    #F5EDE3;   /* targetes, panells */
+  --color-surface-rest:    #F0E8DC;   /* zones de relax */
+  --color-surface-overlay: #FFFFFF;   /* modals, elevated */
 
-  /* Text */
-  --text-primary:   #3A271A;
-  --text-secondary: #57493B;
-  --text-tertiary:  #8C7B6B;
+  /* ── Text ──────────────────────────────────────────── */
+  --color-text-heading: #3A271A;
+  --color-text-body:    #57493B;
+  --color-text-muted:   #8C7B6B;
 
-  /* Vores */
-  --border-default: #D4C8BA;
-  --border-soft:    #E8DDD0;
+  /* ── Vores ─────────────────────────────────────────── */
+  --color-border-default: #D4C8BA;
+  --color-border-subtle:  #E8DDD0;
 
-  /* ── Propietats específiques de la Sala (Hall) ──────── */
-  /* Colors de fusta i entorn fosc del vestíbul */
+  /* ── Legacy aliases (per compatibilitat amb components) ─ */
+  --accent-primary:       var(--color-accent-primary);
+  --accent-primary-light: var(--color-accent-primary-light);
+  --accent-primary-50:    var(--color-accent-primary-50);
+  --accent-warm:          var(--color-accent-reward);
+  --accent-warm-light:    var(--color-accent-reward-light);
+  --accent-calm:          var(--color-accent-calm);
+  --accent-calm-light:    var(--color-accent-calm-light);
+  --accent-critical:      var(--color-accent-danger);
+  --accent-critical-light:var(--color-accent-danger-light);
+  --surface-muted:        var(--color-text-body);
+  --base-dark:            var(--color-surface-dark);
+  --base-deep:            var(--color-text-heading);
+  --surface-light:        var(--color-surface-base);
+  --surface-card:         var(--color-surface-card);
+  --surface-elevated:     var(--color-surface-overlay);
+  --text-primary:         var(--color-text-heading);
+  --text-secondary:       var(--color-text-body);
+  --text-tertiary:        var(--color-text-muted);
+  --border-default:       var(--color-border-default);
+  --border-soft:          var(--color-border-subtle);
+
+  /* ── Propietats específiques de la Sala (Hall) ─────── */
   --hall-floor-dark:  #1A1208;
   --hall-floor-mid:   #2A1C0A;
   --hall-ceiling:     #060606;
@@ -57,8 +99,7 @@
   --wood-dark:        #6B4A28;
   --wood-grain:       rgba(61, 43, 26, 0.28);
 
-  /* ── Propietats del temporitzador — actualitzades per React ── */
-  /* Aquests valors s'actualitzen via l'atribut style del component */
+  /* ── Propietats del temporitzador ──────────────────── */
   --timer-glow-color:          transparent;
   --timer-glow-intensity:      0;
   --timer-glow-pulse-duration: 3s;
@@ -69,21 +110,34 @@
    Dimly lit café at night — warm and deep, never cold/blue.
    ------------------------------------------------------------ */
 [data-theme="dark"] {
-  --surface-light:    #1A2E2B;
-  --surface-card:     #203530;
-  --surface-elevated: #2A4540;
+  --color-surface-base:    #1A2E2B;
+  --color-surface-card:    #203530;
+  --color-surface-rest:    #182826;
+  --color-surface-overlay: #2A4540;
 
-  --text-primary:   #F5EDE3;
-  --text-secondary: #C8B9A8;
-  --text-tertiary:  #8C7B6B;
+  --color-text-heading: #F5EDE3;
+  --color-text-body:    #C8B9A8;
+  --color-text-muted:   #8C7B6B;
 
-  --border-default: #3D5550;
-  --border-soft:    #2F4A45;
+  --color-border-default: #3D5550;
+  --color-border-subtle:  #2F4A45;
 
-  --accent-primary-50: rgba(174, 88, 21, 0.12);
-  --surface-muted: #4A5E5A;
+  --color-accent-primary-50: rgba(174, 88, 21, 0.12);
+  --color-text-body-muted: #4A5E5A;
 
-  /* Timer — sense canvis al mode fosc (valors inicials iguals) */
+  /* Legacy aliases — dark mode */
+  --surface-light:    var(--color-surface-base);
+  --surface-card:     var(--color-surface-card);
+  --surface-elevated: var(--color-surface-overlay);
+  --text-primary:     var(--color-text-heading);
+  --text-secondary:   var(--color-text-body);
+  --text-tertiary:    var(--color-text-muted);
+  --border-default:   var(--color-border-default);
+  --border-soft:      var(--color-border-subtle);
+  --accent-primary-50:var(--color-accent-primary-50);
+  --surface-muted:    #4A5E5A;
+
+  /* Timer — sense canvis al mode fosc */
   --timer-glow-color:          transparent;
   --timer-glow-intensity:      0;
   --timer-glow-pulse-duration: 3s;
@@ -94,19 +148,18 @@
    ------------------------------------------------------------ */
 .clearmind-app {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--surface-light);
-  color: var(--text-primary);
+  background-color: var(--color-surface-base);
+  color: var(--color-text-heading);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Transició suau per a canvis de tema */
-.clearmind-app,
-.clearmind-app * {
-  transition-property: background-color, border-color, color;
-  transition-duration: 200ms;
-  transition-timing-function: ease-out;
+/* Transició suau per a canvis de tema (només propietats de color) */
+.clearmind-app {
+  transition: background-color 300ms ease-out,
+              color 200ms ease-out,
+              border-color 200ms ease-out;
 }
 
 /* Excepció: no transicionar animacions pròpies dels components */
@@ -133,14 +186,14 @@
    Anells de focus accessibles — càlids, visibles, WCAG AA
    ------------------------------------------------------------ */
 :focus-visible {
-  outline: 2px solid var(--accent-primary);
+  outline: 2px solid var(--color-accent-primary);
   outline-offset: 2px;
   border-radius: 4px;
 }
 
 /* Focus específic per a elements sobre fons foscos (Hall, Study) */
 .dark-surface :focus-visible {
-  outline-color: var(--accent-warm-light);
+  outline-color: var(--color-accent-reward-light);
 }
 
 /* ------------------------------------------------------------
@@ -166,17 +219,58 @@
   }
 }
 
+/* ── Flotació de les notes adhesives — suau, escalonada ──── */
+@keyframes postit-float {
+  0%, 100% { transform: translateY(0)    rotate(var(--rotation, 0deg)); }
+  50%       { transform: translateY(-3px) rotate(var(--rotation, 0deg)); }
+}
+
+/* ── Respiració subtil del timer en repòs ─────────────────── */
+@keyframes timer-breathe {
+  0%, 100% { box-shadow: 4px 6px 20px rgba(58,39,26,0.22), inset 0 0 40px rgba(0,0,0,0.6); }
+  50%       { box-shadow: 4px 6px 28px rgba(58,39,26,0.30), inset 0 0 40px rgba(0,0,0,0.6); }
+}
+
+/* ── Polsos del glow progressiu del timer ─────────────────── */
+/* ADHD note: amber pulse = "you're doing great", not alarm */
+@keyframes pulse-amber {
+  0%, 100% { box-shadow: 0 0 20px var(--color-accent-reward), 0 0 40px rgba(174,130,4,0.15), 4px 6px 20px rgba(58,39,26,0.22), inset 0 0 40px rgba(0,0,0,0.6); }
+  50%       { box-shadow: 0 0 28px var(--color-accent-reward), 0 0 56px rgba(174,130,4,0.22), 4px 6px 20px rgba(58,39,26,0.22), inset 0 0 40px rgba(0,0,0,0.6); }
+}
+@keyframes pulse-terracotta {
+  0%, 100% { box-shadow: 0 0 30px var(--color-accent-primary), 0 0 60px rgba(174,88,21,0.20), 4px 6px 20px rgba(58,39,26,0.22), inset 0 0 40px rgba(0,0,0,0.6); }
+  50%       { box-shadow: 0 0 42px var(--color-accent-primary), 0 0 80px rgba(174,88,21,0.28), 4px 6px 20px rgba(58,39,26,0.22), inset 0 0 40px rgba(0,0,0,0.6); }
+}
+@keyframes pulse-critical {
+  0%, 100% { box-shadow: 0 0 40px var(--color-accent-danger), 0 0 80px rgba(199,13,11,0.25), 4px 6px 20px rgba(58,39,26,0.22), inset 0 0 40px rgba(0,0,0,0.6); }
+  50%       { box-shadow: 0 0 55px var(--color-accent-danger), 0 0 110px rgba(199,13,11,0.35), 4px 6px 20px rgba(58,39,26,0.22), inset 0 0 40px rgba(0,0,0,0.6); }
+}
+
+/* ── Flaix de fi de temporitzador — 3 polsos en 1.5s ──────── */
+/* ADHD: changed to accent-reward (amber) to feel like a warm
+   cafe bell, not an alarm. Use pulse-critical ONLY for overdue. */
+@keyframes timer-completed-flash {
+  0%, 100% { border-color: var(--color-border-default); }
+  33%, 66% { border-color: var(--color-accent-reward); box-shadow: 0 0 50px var(--color-accent-reward), 0 0 100px rgba(174,130,4,0.4), inset 0 0 40px rgba(0,0,0,0.6); }
+}
+
+/* Overdue / critical flash — reserved for actual urgency */
+@keyframes timer-overdue-flash {
+  0%, 100% { border-color: var(--color-border-default); }
+  33%, 66% { border-color: var(--color-accent-danger); box-shadow: 0 0 50px var(--color-accent-danger), 0 0 100px rgba(199,13,11,0.4), inset 0 0 40px rgba(0,0,0,0.6); }
+}
+
 /* Animació del cercle de respiració */
 @keyframes breatheIn {
-  from { transform: scale(1);    border-color: var(--accent-calm-light); }
-  to   { transform: scale(1.28); border-color: var(--accent-calm); }
+  from { transform: scale(1);    border-color: var(--color-accent-calm-light); }
+  to   { transform: scale(1.28); border-color: var(--color-accent-calm); }
 }
 @keyframes breatheOut {
-  from { transform: scale(1.28); border-color: var(--accent-calm); }
-  to   { transform: scale(1);    border-color: var(--accent-calm-light); }
+  from { transform: scale(1.28); border-color: var(--color-accent-calm); }
+  to   { transform: scale(1);    border-color: var(--color-accent-calm-light); }
 }
 @keyframes breatheHold {
-  from, to { transform: scale(1.28); border-color: var(--accent-warm-light); }
+  from, to { transform: scale(1.28); border-color: var(--color-accent-reward-light); }
 }
 
 /* ------------------------------------------------------------
@@ -199,6 +293,15 @@
   @keyframes breatheIn  { from, to { opacity: 0.8; } }
   @keyframes breatheOut { from, to { opacity: 0.6; } }
   @keyframes breatheHold { from, to { opacity: 0.7; } }
+
+  /* Post-its i timer — sense moviment */
+  @keyframes postit-float        { from, to { transform: rotate(var(--rotation, 0deg)); } }
+  @keyframes timer-breathe       { from, to { box-shadow: 4px 6px 20px rgba(58,39,26,0.22), inset 0 0 40px rgba(0,0,0,0.6); } }
+  @keyframes pulse-amber         { from, to { box-shadow: 0 0 20px var(--color-accent-reward), 4px 6px 20px rgba(58,39,26,0.22), inset 0 0 40px rgba(0,0,0,0.6); } }
+  @keyframes pulse-terracotta    { from, to { box-shadow: 0 0 30px var(--color-accent-primary), 4px 6px 20px rgba(58,39,26,0.22), inset 0 0 40px rgba(0,0,0,0.6); } }
+  @keyframes pulse-critical      { from, to { box-shadow: 0 0 40px var(--color-accent-danger), 4px 6px 20px rgba(58,39,26,0.22), inset 0 0 40px rgba(0,0,0,0.6); } }
+  @keyframes timer-completed-flash { from, to { border-color: var(--color-accent-reward); } }
+  @keyframes timer-overdue-flash   { from, to { border-color: var(--color-accent-danger); } }
 
   /* Elimina les transicions globals de moviment */
   *,
@@ -224,12 +327,12 @@
 @layer utilities {
   .scrollbar-warm {
     scrollbar-width: thin;
-    scrollbar-color: var(--border-default) transparent;
+    scrollbar-color: var(--color-border-default) transparent;
   }
   .scrollbar-warm::-webkit-scrollbar { width: 6px; }
   .scrollbar-warm::-webkit-scrollbar-track { background: transparent; }
   .scrollbar-warm::-webkit-scrollbar-thumb {
-    background-color: var(--border-default);
+    background-color: var(--color-border-default);
     border-radius: 9999px;
   }
 

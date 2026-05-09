@@ -21,7 +21,12 @@ export const TodoProvider = ({ children }) => {
       todos, 
       setTodos, 
       isLoading,
-      addTodo: (newTodo) => setTodos(prev => [...prev, newTodo]),
+      addTodo: (newTodo) => setTodos(prev => [...prev, {
+        ...newTodo,
+        date:      newTodo.date      || new Date().toISOString().split('T')[0],
+        id:        newTodo.id        || Date.now(),
+        completed: newTodo.completed || false,
+      }]),
       deleteTodo: (id) => setTodos(prev => prev.filter(t => t.id !== id)),
       toggleTodo: (id) => setTodos(prev => prev.map(t => 
         t.id === id ? { ...t, completed: !t.completed } : t

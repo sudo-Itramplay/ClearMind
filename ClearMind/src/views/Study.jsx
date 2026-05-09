@@ -1,19 +1,20 @@
 /* Study.jsx — Vista de la sala d'estudi
-   Escriptori de fusta amb: tauler de suro, llibreta, temporitzador, ràdio
-   WCAG 2.1 AA: aria-labels, role="main", aria-live, focus visible
-   Accessibilitat del slider: aria-label, aria-valuenow               */
+   Metàfora espacial: PARET (61.8vh) + TAULA (38.2vh) — ràtio àuria φ ≈ 1.618
+   Paret: tauler de suro amb tasques d'avui.
+   Taula: llibreta (38.2%) + temporitzador (61.8%) + ràdio ambiental.
+   WCAG 2.1 AA: role="main", seccions semàntiques, focus trap al modal.          */
 
 import { useState, useEffect, useRef } from 'react'
-import { DeskTimer }    from '../components/features/desk-timer'
-import { CorkBoard }    from '../components/features/cork-board'
-import { DeskNotebook } from '../components/features/desk-notebook'
+import { CorkBoard }                         from '../components/features/cork-board'
+import { DeskTimer }                          from '../components/features/desk-timer'
+import { DeskNotebook, AgendaModal }          from '../components/features/desk-notebook'
 import './css/Study.css'
 
 /* Sons ambientals disponibles */
-const ambientSounds = [
-  { id: 'pluja',      label: 'Pluja',      icon: '🌧', file: '/sounds/pluja.mp3'      },
-  { id: 'cafeteria',  label: 'Cafeteria',  icon: '☕', file: '/sounds/cafeteria.mp3'  },
-  { id: 'lofi',       label: 'Lo-Fi',      icon: '🎵', file: '/sounds/lofi.mp3'       },
+const AMBIENT_SOUNDS = [
+  { id: 'pluja',     label: 'Pluja suau',    icon: '🌧', file: '/sounds/pluja.mp3'      },
+  { id: 'cafeteria', label: 'Cafeteria',      icon: '☕', file: '/sounds/cafeteria.mp3'  },
+  { id: 'lofi',      label: 'Ritmes Lo-Fi',  icon: '🎵', file: '/sounds/lofi.mp3'       },
 ]
 
 /* Dispositiu de ràdio ambiental — component intern */
@@ -24,15 +25,13 @@ function RadioDevice({ currentSound, isPlaying, volume, onToggle, onVolume }) {
       role="region"
       aria-label="Ràdio d'àudio ambiental"
     >
-      {/* Reixeta decorativa del parlant */}
-      <div className="radio-grille" aria-hidden="true" />
+      {/* Reixeta decorativa */}
+      <div className="radio-grille" aria-hidden="true">
+        <span className="radio-brand" aria-hidden="true">ClearMind-FM</span>
+      </div>
 
-      {/* Etiqueta de marca — decorativa */}
-      <span className="radio-brand" aria-hidden="true">AMBIENT</span>
-
-      {/* Cos principal — botons + volum */}
       <div className="radio-body">
-        {ambientSounds.map(sound => {
+        {AMBIENT_SOUNDS.map(sound => {
           const active = currentSound?.id === sound.id && isPlaying
           return (
             <button
@@ -40,13 +39,8 @@ function RadioDevice({ currentSound, isPlaying, volume, onToggle, onVolume }) {
               className={`audio-btn${active ? ' active' : ''}`}
               onClick={() => onToggle(sound)}
               aria-pressed={active}
-              aria-label={
-                active
-                  ? `Atura el so de ${sound.label}`
-                  : `Reproduir so de ${sound.label}`
-              }
+              aria-label={active ? `Atura el so de ${sound.label}` : `Reproduir so de ${sound.label}`}
             >
-              {/* LED d'estat */}
               <span className="audio-led" aria-hidden="true" />
               <span aria-hidden="true">{sound.icon}</span>
               {sound.label}
@@ -54,7 +48,7 @@ function RadioDevice({ currentSound, isPlaying, volume, onToggle, onVolume }) {
           )
         })}
 
-        {/* Control de volum */}
+        {/* Slider de volum */}
         <div className="volume-row">
           <span className="volume-icon" aria-hidden="true">🔈</span>
           <input
@@ -65,7 +59,7 @@ function RadioDevice({ currentSound, isPlaying, volume, onToggle, onVolume }) {
             step={0.05}
             value={volume}
             onChange={e => onVolume(Number(e.target.value))}
-            aria-label="Control de volum"
+            aria-label="Volum ambiental"
             aria-valuenow={Math.round(volume * 100)}
             aria-valuemin={0}
             aria-valuemax={100}
@@ -77,9 +71,14 @@ function RadioDevice({ currentSound, isPlaying, volume, onToggle, onVolume }) {
   )
 }
 
-/* Component principal de la vista d'estudi */
+/* Component principal */
 const Study = () => {
-  /* ── Estat de l'àudio ambiental ──────────────────────────── */
+  /* ── Estat del modal de l'agenda — gestionat aquí per poder-lo
+     obrir tant des del corkboard (botó +) com des de la llibreta */
+  const [agendaOpen,   setAgendaOpen]   = useState(false)
+  const [agendaDate,   setAgendaDate]   = useState(null)
+
+  /* ── Estat de l'àudio ambiental ─────────────────────────── */
   const [currentSound, setCurrentSound] = useState(null)
   const [isPlaying,    setIsPlaying]    = useState(false)
   const [volume,       setVolume]       = useState(0.5)
@@ -87,30 +86,8 @@ const Study = () => {
 
   /* Sincronitza el volum amb l'element àudio */
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume
-    }
+    if (audioRef.current) audioRef.current.volume = volume
   }, [volume])
-
-  /* Activa o canvia el so ambient */
-  function handleToggleSound(sound) {
-    /* Mateix so → pausa o reprèn */
-    if (currentSound?.id === sound.id) {
-      if (isPlaying) {
-        audioRef.current?.pause()
-        setIsPlaying(false)
-      } else {
-        audioRef.current?.play().catch(() => {})
-        setIsPlaying(true)
-      }
-      return
-    }
-
-    /* So diferent → canvia la font i reprodueix */
-    setCurrentSound(sound)
-    setIsPlaying(true)
-    /* El canvi de src dispararà l'effecte de play */
-  }
 
   /* Quan canvia la font, inicia la reproducció */
   useEffect(() => {
@@ -121,45 +98,93 @@ const Study = () => {
     el.play().catch(() => {})
   }, [currentSound])
 
+  /* Alterna so ambiental */
+  function handleToggleSound(sound) {
+    if (currentSound?.id === sound.id) {
+      if (isPlaying) {
+        audioRef.current?.pause()
+        setIsPlaying(false)
+      } else {
+        audioRef.current?.play().catch(() => {})
+        setIsPlaying(true)
+      }
+      return
+    }
+    setCurrentSound(sound)
+    setIsPlaying(true)
+  }
+
+  /* Obre l'agenda des del botó + del corkboard */
+  function handleAddTaskFromCorkboard() {
+    setAgendaDate(new Date().toISOString().split('T')[0])
+    setAgendaOpen(true)
+  }
+
+  /* Tanca el modal i torna el focus a la llibreta */
+  const notebookBtnRef = useRef(null)
+  function handleCloseAgenda() {
+    setAgendaOpen(false)
+    setTimeout(() => notebookBtnRef.current?.focus(), 50)
+  }
+
   return (
     <main
-      className="study-desk"
+      className="study-page"
       role="main"
       aria-label="Sala d'estudi"
     >
-      {/* Element àudio — invisible i accessible */}
+      {/* Element àudio — invisible */}
       <audio
         ref={audioRef}
-        src={currentSound ? currentSound.file : undefined}
+        src={currentSound?.file}
         loop
         aria-hidden="true"
       />
 
-      {/* Vinyeta decorativa d'ambient — aria-hidden */}
-      <div className="study-vignette" aria-hidden="true" />
+      {/* ══ ZONA DE PARET (61.8vh) — Tauler de suro ════════ */}
+      <section
+        className="study-wall"
+        aria-label="Paret de l'estudi — tauler de tasques"
+      >
+        <CorkBoard onAddTask={handleAddTaskFromCorkboard} />
+      </section>
 
-      {/* ── Disposició de tres columnes de l'escriptori ───── */}
-      <div className="study-layout">
+      {/* Modal de l'agenda setmanal — controlat des d'aquí */}
+      <AgendaModal
+        isOpen={agendaOpen}
+        onClose={handleCloseAgenda}
+        initialDate={agendaDate}
+      />
 
-        {/* ── COLUMNA ESQUERRA: Llibreta + Ràdio ────────── */}
-        <div className="study-left-col">
-          <DeskNotebook />
-          <RadioDevice
-            currentSound={currentSound}
-            isPlaying={isPlaying}
-            volume={volume}
-            onToggle={handleToggleSound}
-            onVolume={setVolume}
-          />
+      {/* ══ ZONA DE TAULA (38.2vh) — Llibreta + Timer + Ràdio */}
+      <section
+        className="study-desk"
+        aria-label="Taula d'estudi — temporitzador i eines"
+      >
+        <div className="study-desk-layout">
+
+          {/* ── Columna esquerra: Llibreta (38.2%) + Ràdio ── */}
+          <div className="study-desk-left">
+            <DeskNotebook onOpen={() => {
+              setAgendaDate(new Date().toISOString().split('T')[0])
+              setAgendaOpen(true)
+            }} />
+            <RadioDevice
+              currentSound={currentSound}
+              isPlaying={isPlaying}
+              volume={volume}
+              onToggle={handleToggleSound}
+              onVolume={setVolume}
+            />
+          </div>
+
+          {/* ── Columna dreta: Temporitzador (61.8%) ─────── */}
+          <div className="study-desk-right">
+            <DeskTimer />
+          </div>
+
         </div>
-
-        {/* ── CENTRE: Tauler de suro ─────────────────────── */}
-        <CorkBoard />
-
-        {/* ── DRETA: Temporitzador ───────────────────────── */}
-        <DeskTimer />
-
-      </div>
+      </section>
     </main>
   )
 }

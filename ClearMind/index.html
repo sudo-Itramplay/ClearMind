@@ -15,6 +15,13 @@
     >
   </head>
   <body>
+    <!-- Aplica el tema guardat ABANS que React munti — evita el flash de mode incorrecte -->
+    <script>
+      try {
+        var t = localStorage.getItem('clearmind-theme')
+        if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark')
+      } catch(e) {}
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

@@ -3,22 +3,26 @@
  * DESIGN_SYSTEM.md — Sistema de Disseny ClearMind
  * ============================================================
  *
- * CONVENCIÓ DE TOKENS
- * -------------------
- * Els tokens de color segueixen el patró: {categoria}-{rol}[-{variant}]
+ * CONVENCIÓ DE TOKENS (v2 — ADHD-optimized)
+ * -----------------------------------------
+ * Els tokens segueixen: {categoria}-{rol}[-{variant}]
  *
- *   accent-primary        → Terracota càlida — accions principals, CTA
- *   accent-warm           → Ambre daurat — insígnies, destacats
- *   accent-calm           → Teal suau — èxit, informació, calma
- *   accent-critical       → Vermell maó — errors, accions destructives
- *   surface-light         → Crema — fons de pàgina (mode clar)
- *   surface-card          → Vori — fons de targetes (mode clar)
- *   surface-elevated      → Blanc — superfícies elevades, modals
- *   text-primary          → Espresso — text principal
- *   text-secondary        → Marró càlid — text secundari
- *   text-tertiary         → Pedra → placeholder, desactivat
- *   border-default        → Vora estàndard
- *   border-soft           → Divisor subtil
+ *   color-accent-primary   → Terracota — accions principals, CTA, focus rings
+ *   color-accent-reward    → Ambre daurat — rècords, recompenses, timer completat
+ *   color-accent-calm      → Teal suau — èxit, respiració, calma
+ *   color-accent-danger    → Vermell maó — NOMÉS errors, accions destructives
+ *   color-surface-base     → Crema — fons de pàgina (mode clar)
+ *   color-surface-card     → Vori — fons de targetes
+ *   color-surface-rest     → Beige mut — zones de relax / respiració
+ *   color-surface-overlay  → Blanc — superfícies elevades, modals
+ *   color-text-heading     → Espresso — títols, text principal
+ *   color-text-body        → Marró càlid — cos, descripcions
+ *   color-text-muted       → Pedra → placeholder, desactivat
+ *   color-border-default   → Vora estàndard
+ *   color-border-subtle    → Divisor subtil
+ *
+ * Legacy aliases (accent-warm, accent-critical, etc.) are preserved
+ * for backwards compatibility but prefer the new semantic names.
  *
  * ESCALA D'ARRODONIMENT
  *   sm=8px, md=12px, lg=16px, xl=24px, full=9999px
@@ -30,8 +34,12 @@
  *   button-hover → botó al passar el cursor (lifted)
  *   ambient → brillantor tèbia d'accent
  *
- * TOTES les colors estan sincronitzades amb les variables CSS
- * definides a src/styles/globals.css (:root i [data-theme="dark"]).
+ * ADHD DESIGN NOTES
+ *   • accent-danger (red) is reserved for errors ONLY — never use
+ *     for success/completion to avoid anxiety triggers.
+ *   • accent-reward (amber) replaces red for timer-done flashes.
+ *   • Warm surfaces reduce blue-light overstimulation.
+ *   • prefers-reduced-motion is respected globally.
  * ============================================================
  */
 
@@ -47,35 +55,59 @@ export default {
   theme: {
     extend: {
       colors: {
-        /* Accents principals — mirall de les variables CSS */
+        /* ── Accents principals ────────────────────────── */
+        'color-accent-primary':       '#AE5815',
+        'color-accent-primary-light': '#D4956A',
+        'color-accent-primary-50':    '#FDF5EE',
+
+        'color-accent-reward':       '#AE8204',
+        'color-accent-reward-light': '#D9B84F',
+
+        'color-accent-calm':       '#3E8283',
+        'color-accent-calm-light': '#7AB5B5',
+
+        'color-accent-danger':       '#C70D0B',
+        'color-accent-danger-light': '#E87878',
+
+        /* ── Neutrals ──────────────────────────────────── */
+        'color-text-body':    '#57493B',
+        'color-surface-dark': '#203E39',
+        'color-text-heading': '#3A271A',
+
+        /* ── Superfícies ───────────────────────────────── */
+        'color-surface-base':    '#FBF7F0',
+        'color-surface-card':    '#F5EDE3',
+        'color-surface-rest':    '#F0E8DC',
+        'color-surface-overlay': '#FFFFFF',
+
+        /* ── Text ──────────────────────────────────────── */
+        'color-text-heading': '#3A271A',
+        'color-text-body':    '#57493B',
+        'color-text-muted':   '#8C7B6B',
+
+        /* ── Vores ─────────────────────────────────────── */
+        'color-border-default': '#D4C8BA',
+        'color-border-subtle':  '#E8DDD0',
+
+        /* ── Legacy aliases (backwards compatibility) ──── */
         'accent-primary':        '#AE5815',
         'accent-primary-light':  '#D4956A',
         'accent-primary-50':     '#FDF5EE',
-
         'surface-muted':  '#57493B',
         'base-dark':      '#203E39',
         'base-deep':      '#3A271A',
-
         'accent-warm':          '#AE8204',
         'accent-warm-light':    '#D9B84F',
-
         'accent-critical':      '#C70D0B',
         'accent-critical-light':'#E87878',
-
         'accent-calm':          '#3E8283',
         'accent-calm-light':    '#7AB5B5',
-
-        /* Superfícies */
         'surface-light':    '#FBF7F0',
         'surface-card':     '#F5EDE3',
         'surface-elevated': '#FFFFFF',
-
-        /* Text */
         'text-primary':   '#3A271A',
         'text-secondary': '#57493B',
         'text-tertiary':  '#8C7B6B',
-
-        /* Vores */
         'border-default': '#D4C8BA',
         'border-soft':    '#E8DDD0',
       },

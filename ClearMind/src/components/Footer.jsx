@@ -42,7 +42,7 @@ const Footer = () => {
 
       </div>
 
-      <p className={styles.copyright}>&copy; {currentYear} AppProd — Productivitat amb enfocament.</p>
+      <p className={styles.copyright}>&copy; {currentYear} ClearMind — Productivitat amb enfocament.</p>
     </footer>
   );
 };

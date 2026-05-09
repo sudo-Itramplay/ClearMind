@@ -16,10 +16,14 @@ const NAV_ITEMS = [
 export function Navbar({ username = 'Alex' }) {
   const location = useLocation()
 
-  /* Gestió del tema — alterna entre clar i fosc */
-  const [isDark, setIsDark] = useState(
-    () => document.documentElement.getAttribute('data-theme') === 'dark'
-  )
+  /* Gestió del tema — persistit a localStorage entre sessions */
+  const [isDark, setIsDark] = useState(() => {
+    try {
+      const saved = localStorage.getItem('clearmind-theme')
+      if (saved) return saved === 'dark'
+    } catch {}
+    return document.documentElement.getAttribute('data-theme') === 'dark'
+  })
 
   function toggleTheme() {
     const next = !isDark
@@ -28,6 +32,7 @@ export function Navbar({ username = 'Alex' }) {
     } else {
       document.documentElement.removeAttribute('data-theme')
     }
+    try { localStorage.setItem('clearmind-theme', next ? 'dark' : 'light') } catch {}
     setIsDark(next)
   }
 
