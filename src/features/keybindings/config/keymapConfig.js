@@ -28,6 +28,7 @@ export const KEYMAP = [
 
   // Tasks
   { id: "openQuickAdd", keys: "q",     description: "Quick add task (Study)", group: "Tasks" },
+  { id: "openQuickAddGlobal", keys: "Q",     description: "Quick add task (Global)", group: "Tasks" },
 
   // General
   { id: "toggleHelp",  keys: "?",      description: "Toggle this cheat-sheet", group: "General" },

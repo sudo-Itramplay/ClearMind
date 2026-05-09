@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { TodoProvider } from './context/TodoContext';
 import { SoundProvider } from './context/SoundContext';
 import { ToastProvider } from './context/ToastContext';
+import { GlobalQuickAddProvider } from './components/GlobalQuickAddProvider';
 import RoomPills from './components/ui/RoomPills';
 import SoundToggle from './components/ui/SoundToggle';
 import Hall from './views/Hall/Hall';
@@ -64,7 +65,9 @@ const App = () => (
       <TodoProvider>
         <KeymapProvider>
           <KeymapDefaults />
-          <Shell />
+          <GlobalQuickAddProvider>
+            <Shell />
+          </GlobalQuickAddProvider>
         </KeymapProvider>
       </TodoProvider>
     </ToastProvider>
