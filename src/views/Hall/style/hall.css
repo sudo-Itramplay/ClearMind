@@ -392,8 +392,8 @@
   gap: 12px;
   justify-self: center;
 }
-.door-wrap-study    { justify-self: end; }
-.door-wrap-meditate { justify-self: start; }
+.door-wrap-study    { justify-self: start; }
+.door-wrap-meditate { justify-self: end; }
 
 .door {
   position: relative;
@@ -454,6 +454,11 @@
   transition: box-shadow 400ms ease;
 }
 
+/* Icon + inline label live inside the button but only show on tablet/mobile,
+   where the door collapses to a simplified rectangle (see media query below). */
+.door-icon,
+.door-inline-label { display: none; }
+
 .door-wrap-study .door {
   transform: rotateY(14deg);
   transform-origin: left center;
@@ -494,14 +499,44 @@
 /* Center table + lamp */
 .table {
   position: relative;
-  width: 130px;
-  height: 90px;
+  width: 150px;
+  height: 130px;
   align-self: end;
   margin-bottom: 16px;
 }
-.lamp-base {
+/* Tabletop — oval wooden surface where the lamp rests */
+.table::before {
+  content: "";
+  position: absolute;
+  bottom: 34px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 22px;
+  background: linear-gradient(180deg, #6b4a2a 0%, #3a281a 70%, #20140b 100%);
+  border-radius: 50% / 45%;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.08),
+    0 6px 14px rgba(0, 0, 0, 0.55);
+}
+/* Pedestal — central column of the side table */
+.table::after {
+  content: "";
   position: absolute;
   bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 38px;
+  background: linear-gradient(180deg, #4a3220, #261810);
+  border-radius: 4px 4px 50% 50% / 4px 4px 30% 30%;
+  box-shadow:
+    inset -2px 0 4px rgba(0, 0, 0, 0.4),
+    inset 2px 0 0 rgba(255, 255, 255, 0.04);
+}
+.lamp-base {
+  position: absolute;
+  bottom: 54px;
   left: 50%;
   transform: translateX(-50%);
   width: 50px;
@@ -511,7 +546,7 @@
 }
 .lamp-stem {
   position: absolute;
-  bottom: 7px;
+  bottom: 61px;
   left: 50%;
   transform: translateX(-50%);
   width: 4px;
@@ -520,7 +555,7 @@
 }
 .lamp-shade {
   position: absolute;
-  bottom: 37px;
+  bottom: 91px;
   left: 50%;
   transform: translateX(-50%);
   width: 64px;
@@ -577,12 +612,12 @@
 }
 .rug {
   position: absolute;
-  bottom: 4%;
+  bottom: 14%;
   left: 50%;
   transform: translateX(-50%) perspective(700px) rotateX(60deg);
   width: 50vw;
   max-width: 700px;
-  height: 160px;
+  height: 120px;
   background:
     repeating-linear-gradient(
       45deg,
@@ -656,9 +691,49 @@
   }
   .door::after  { display: none; }
   .door-glow    { display: none; }
-  .plaque { font-size: 0.85rem; padding: 4px 14px; }
+
+  /* Replace empty bar + plaque-below with a self-explanatory icon + label
+     inside the block. */
+  .door {
+    gap: 14px;
+    padding: 0 22px;
+  }
+  .door-icon {
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    color: var(--amber-glow);
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+  .door-icon svg { width: 100%; height: 100%; display: block; }
+  .door-inline-label {
+    display: inline;
+    font-family: "Crimson Pro", serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--amber-soft);
+    z-index: 1;
+  }
+  .plaque { display: none; }
+
   .table  { display: none; }
   .hall-floor-wrap { display: none; }
+}
+
+/* Phones: shrink the icon/label so two doors stack comfortably without
+   pushing the calendar offscreen. */
+@media (max-width: 480px) {
+  .door {
+    height: 56px;
+    padding: 0 16px;
+    gap: 10px;
+  }
+  .door-icon { width: 26px; height: 26px; }
+  .door-inline-label { font-size: 0.95rem; }
 }
 
 /* Touch-target tweaks for narrow screens */
