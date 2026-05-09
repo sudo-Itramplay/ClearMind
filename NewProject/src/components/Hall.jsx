@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useTodos } from '../context/AppContext';
-import { useSoundCtx } from '../context/AppContext';
+import React, { useState, useEffect } from 'react';
+import Calendar from './Calendar';
+import Door from './Door';
 
 const useClock = () => {
   const [now, setNow] = useState(new Date());
@@ -55,104 +55,6 @@ const WallClock = () => {
   );
 };
 
-// Build 35-day window ending today, group todos by date
-const useCalendarDays = (todos) => {
-  return useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    // Start 34 days before today so today is the last sphere
-    const days = [];
-    const map = {};
-    for (const t of todos) {
-      (map[t.date] = map[t.date] || []).push(t);
-    }
-    for (let i = 34; i >= 0; i--) {
-      const d = new Date(today);
-      d.setDate(d.getDate() - i);
-      const key = d.toISOString().slice(0, 10);
-      const list = map[key] || [];
-      const total = list.length;
-      const done = list.filter((t) => t.completed).length;
-      const isToday = i === 0;
-      // intensity tier
-      let alpha = 0, glow = 0;
-      if (total >= 5)      { alpha = 1.0; glow = 18; }
-      else if (total >= 4) { alpha = 0.8; glow = 14; }
-      else if (total >= 2) { alpha = 0.5; glow = 10; }
-      else if (total >= 1) { alpha = 0.22; glow = 6; }
-      days.push({ key, total, done, isToday, alpha, glow, allDone: total > 0 && done === total });
-    }
-    return days;
-  }, [todos]);
-};
-
-const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-const DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-
-const CalendarWall = () => {
-  const { todos, isLoading } = useTodos();
-  const days = useCalendarDays(todos);
-  const now = new Date();
-  return (
-    <div className="calendar">
-      <h2 className="calendar-label">{MONTHS[now.getMonth()]} {now.getFullYear()}</h2>
-      <div className="calendar-days" aria-hidden="true">
-        {DAYS.map((d) => <span key={d}>{d}</span>)}
-      </div>
-      <div className="calendar-grid" role="img" aria-label="Daily activity for the past five weeks">
-        {isLoading
-          ? Array.from({ length: 35 }).map((_, i) => <div key={i} className="sphere" />)
-          : days.map((d) => (
-              <div
-                key={d.key}
-                className={[
-                  "sphere",
-                  d.alpha > 0 ? "lit" : "",
-                  d.isToday ? "today" : "",
-                  d.allDone ? "done" : "",
-                ].join(" ").trim()}
-                style={d.alpha > 0 ? {
-                  opacity: 0.35 + d.alpha * 0.65,
-                  "--glow": d.glow + "px",
-                  "--glow-a": d.alpha,
-                } : undefined}
-                aria-label={`${d.key}: ${d.total} task${d.total === 1 ? "" : "s"}, ${d.done} done`}
-              >
-                <span className="sphere-tip">{d.key}: {d.total} task{d.total === 1 ? "" : "s"}</span>
-              </div>
-            ))
-        }
-      </div>
-      <div className="calendar-legend" aria-label="Activity legend">
-        <span><span className="lg-dot" style={{ background: "#3D2E20" }} />None</span>
-        <span><span className="lg-dot" style={{ background: "rgba(245,166,35,0.4)" }} />Low</span>
-        <span><span className="lg-dot" style={{ background: "rgba(245,166,35,0.85)" }} />High</span>
-        <span><span className="lg-dot" style={{ background: "#B8D8C8" }} />Done ✓</span>
-      </div>
-    </div>
-  );
-};
-
-const Door = ({ kind, label, onClick }) => {
-  const { play } = useSoundCtx();
-  return (
-    <div
-      className={"door-wrap " + kind}
-      onMouseEnter={() => play && play("creak")}
-    >
-      <button
-        type="button"
-        className={"door " + kind}
-        aria-label={`Enter ${label}`}
-        onClick={() => { play && play("click"); onClick(); }}
-      >
-        <span className="door-light" aria-hidden="true" />
-      </button>
-      <div className="plaque">{label}</div>
-    </div>
-  );
-};
-
 const CenterTable = () => (
   <div className="table" aria-hidden="true">
     <div className="lamp-shade" />
@@ -165,13 +67,23 @@ const Hall = ({ go }) => (
   <div className="hall page-anim">
     <div className="hall-grain" aria-hidden="true" />
     <div className="hall-top">
-      <CalendarWall />
+      <Calendar />
       <WallClock />
     </div>
     <div className="hall-mid">
-      <Door kind="study" label="Study Room" onClick={() => go("study")} />
+      <Door
+        kind="study"
+        label="Study Room"
+        glowColor="rgba(212, 165, 116, 0.35)"
+        onClick={() => go("study")}
+      />
       <CenterTable />
-      <Door kind="meditate" label="Meditate" onClick={() => go("meditate")} />
+      <Door
+        kind="meditate"
+        label="Meditate"
+        glowColor="rgba(90, 138, 140, 0.35)"
+        onClick={() => go("meditate")}
+      />
     </div>
     <div className="hall-floor-wrap" aria-hidden="true">
       <div className="hall-skirting" />

@@ -62,3 +62,34 @@ export const BackButton = ({ onClick }) => (
     <span>Hall</span>
   </button>
 );
+
+export const ConfirmDialog = ({
+  open,
+  title,
+  message,
+  cancelLabel = "Cancel",
+  confirmLabel = "Confirm",
+  danger = false,
+  onCancel,
+  onConfirm,
+}) => (
+  <Modal open={open} onClose={onCancel} labelledBy="confirm-title">
+    <h2 id="confirm-title" className="confirm-title">{title}</h2>
+    {message && <p className="confirm-message">{message}</p>}
+    <div className="confirm-actions">
+      <Button
+        variant="ghost"
+        onClick={onCancel}
+        style={{ color: "var(--text-body)", borderColor: "rgba(74,55,40,0.25)" }}
+      >
+        {cancelLabel}
+      </Button>
+      <Button
+        variant={danger ? "danger" : "secondary"}
+        onClick={onConfirm}
+      >
+        {confirmLabel}
+      </Button>
+    </div>
+  </Modal>
+);

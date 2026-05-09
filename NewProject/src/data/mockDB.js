@@ -1,14 +1,14 @@
 // Mock DB — async with delay, in-memory + localStorage persistence
+import { localDateKey, localDateShift } from '../utils/date';
+
 const _delay = (ms = 220) => new Promise((r) => setTimeout(r, ms));
 const _id = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-const _today = () => new Date().toISOString().slice(0, 10);
-const _shift = (n) => {
-  const d = new Date();
-  d.setDate(d.getDate() + n);
-  return d.toISOString().slice(0, 10);
-};
+const _today = () => localDateKey();
+const _shift = (n) => localDateShift(n);
 
-const STORAGE_KEY = "clearmind-todos";
+// v2: switched from UTC ISO date to local date keys. Old seed data used
+// off-by-one keys in non-UTC timezones, so it must not be re-loaded.
+const STORAGE_KEY = "clearmind-todos-v2";
 
 const seed = () => {
   const t = _today();

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTodos } from '../context/AppContext';
-import { useSoundCtx } from '../context/AppContext';
-import { Button, Modal, BackButton, Loader } from './UI';
+import { Button, Modal, BackButton, Loader, ConfirmDialog } from './UI';
+import Watch from './Watch';
 import { dateToday } from '../data/mockDB';
 
 const POSITIONS = [
@@ -48,12 +48,14 @@ const Postit = ({ note, idx, onToggle, dropping }) => {
   );
 };
 
-const NotebookForm = ({ onSubmit, onCancel }) => {
+const NotebookForm = ({ onSubmit, onCancel, onDirty }) => {
   const [task, setTask] = useState("");
   const [desc, setDesc] = useState("");
   const [priority, setPriority] = useState("normal");
   const [date, setDate] = useState(dateToday());
   const [error, setError] = useState(null);
+  const dirty = !!(task.trim() || desc.trim());
+  useEffect(() => { onDirty && onDirty(dirty); }, [dirty, onDirty]);
   const submit = (e) => {
     e.preventDefault();
     if (!task.trim()) { setError("Task is required."); return; }
@@ -110,129 +112,97 @@ const NotebookModal = ({ open, onClose }) => {
   const list = todos.filter((t) => t.date === today)
     .sort((a, b) => Number(a.completed) - Number(b.completed) || b.createdAt - a.createdAt);
   const [showForm, setShowForm] = useState(false);
+  const [formDirty, setFormDirty] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const [pendingDiscard, setPendingDiscard] = useState(false);
+
   const submit = async (data) => {
     await addTodo(data);
+    setFormDirty(false);
     setShowForm(false);
   };
+
+  const requestCloseForm = () => {
+    if (formDirty) setPendingDiscard(true);
+    else setShowForm(false);
+  };
+
+  const requestCloseModal = () => {
+    if (pendingDelete || pendingDiscard) return;
+    if (showForm && formDirty) { setPendingDiscard(true); return; }
+    onClose && onClose();
+  };
+
+  const confirmDiscard = () => {
+    setShowForm(false);
+    setFormDirty(false);
+    setPendingDiscard(false);
+  };
+
   return (
-    <Modal open={open} onClose={onClose} labelledBy="nb-title">
-      <h2 id="nb-title">My Tasks</h2>
-      <p className="muted" style={{ marginTop: 4 }}>
-        {list.length} for today · {list.filter((t) => t.completed).length} done
-      </p>
-      {!showForm && (
-        <div style={{ marginTop: 14 }}>
-          <Button variant="primary" onClick={() => setShowForm(true)}>+ New task</Button>
-        </div>
-      )}
-      {showForm && <NotebookForm onSubmit={submit} onCancel={() => setShowForm(false)} />}
-      <ul className="nb-list" aria-label="Today's tasks">
-        {list.length === 0 && <li style={{ justifyContent: "center", color: "var(--text-muted)" }}>Nothing yet — add your first task.</li>}
-        {list.map((t) => (
-          <li key={t.id} className={t.completed ? "done" : ""}>
-            <button className={"nb-check " + (t.completed ? "checked" : "")}
-              role="checkbox" aria-checked={t.completed}
-              aria-label={"Toggle " + t.task}
-              onClick={() => toggleTodo(t.id)}>
-              {t.completed ? "✓" : ""}
-            </button>
-            <div className="nb-task">
-              {t.task}
-              {t.description && <span className="nb-desc">{t.description}</span>}
-            </div>
-            <span className={"pt-prio " + (t.priority || "normal")} style={{ position: "static", marginTop: 6 }} aria-hidden="true" />
-            <button className="nb-del" aria-label={"Delete " + t.task} onClick={() => deleteTodo(t.id)}>×</button>
-          </li>
-        ))}
-      </ul>
-    </Modal>
+    <>
+      <Modal open={open} onClose={requestCloseModal} labelledBy="nb-title">
+        <h2 id="nb-title">My Tasks</h2>
+        <p className="muted" style={{ marginTop: 4 }}>
+          {list.length} for today · {list.filter((t) => t.completed).length} done
+        </p>
+        {!showForm && (
+          <div style={{ marginTop: 14 }}>
+            <Button variant="primary" onClick={() => setShowForm(true)}>+ New task</Button>
+          </div>
+        )}
+        {showForm && (
+          <NotebookForm
+            onSubmit={submit}
+            onCancel={requestCloseForm}
+            onDirty={setFormDirty}
+          />
+        )}
+        <ul className="nb-list" aria-label="Today's tasks">
+          {list.length === 0 && <li style={{ justifyContent: "center", color: "var(--text-muted)" }}>Nothing yet — add your first task.</li>}
+          {list.map((t) => (
+            <li key={t.id} className={t.completed ? "done" : ""}>
+              <button className={"nb-check " + (t.completed ? "checked" : "")}
+                role="checkbox" aria-checked={t.completed}
+                aria-label={"Toggle " + t.task}
+                onClick={() => toggleTodo(t.id)}>
+                {t.completed ? "✓" : ""}
+              </button>
+              <div className="nb-task">
+                {t.task}
+                {t.description && <span className="nb-desc">{t.description}</span>}
+              </div>
+              <span className={"pt-prio " + (t.priority || "normal")} style={{ position: "static", marginTop: 6 }} aria-hidden="true" />
+              <button className="nb-del" aria-label={"Delete " + t.task} onClick={() => setPendingDelete(t)}>×</button>
+            </li>
+          ))}
+        </ul>
+      </Modal>
+      <ConfirmDialog
+        open={!!pendingDelete}
+        title="Vols eliminar aquesta tasca?"
+        message="S'esborrarà de la pissarra."
+        cancelLabel="Conservar"
+        confirmLabel="Eliminar"
+        danger
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={() => {
+          const id = pendingDelete && pendingDelete.id;
+          setPendingDelete(null);
+          if (id) deleteTodo(id);
+        }}
+      />
+      <ConfirmDialog
+        open={pendingDiscard}
+        title="Descartar canvis?"
+        message="Hi ha canvis sense guardar al formulari."
+        cancelLabel="Seguir editant"
+        confirmLabel="Descartar"
+        onCancel={() => setPendingDiscard(false)}
+        onConfirm={confirmDiscard}
+      />
+    </>
   );
-};
-
-// Timer ring with progress
-const TimerRing = ({ time, percent = 0, done }) => {
-  const c = 80, r = 70;
-  const circ = 2 * Math.PI * r;
-  return (
-    <div className={"timer-ring " + (done ? "timer-done" : "")} aria-hidden="true">
-      <svg width="160" height="160" viewBox="0 0 160 160">
-        <defs>
-          <radialGradient id="bezel" cx="50%" cy="50%" r="50%">
-            <stop offset="78%" stopColor="#6B4E3D" /><stop offset="100%" stopColor="#2C1B0E" />
-          </radialGradient>
-        </defs>
-        <circle cx={c} cy={c} r={r + 8} fill="url(#bezel)" />
-        <circle cx={c} cy={c} r={r + 1} fill="#1a120a" />
-        <circle cx={c} cy={c} r={r - 4} fill="none"
-          stroke="rgba(245,230,211,0.10)" strokeWidth="3" />
-        <circle cx={c} cy={c} r={r - 4} fill="none"
-          stroke="#D4A574" strokeWidth="3" strokeLinecap="round"
-          strokeDasharray={circ}
-          strokeDashoffset={circ * (1 - percent)}
-          transform={`rotate(-90 ${c} ${c})`}
-          style={{ transition: "stroke-dashoffset 0.4s linear" }} />
-      </svg>
-      <div className="timer-center">
-        <span className="timer-time mono">{time}</span>
-      </div>
-    </div>
-  );
-};
-
-const fmtTime = (s) => {
-  s = Math.max(0, Math.floor(s));
-  const m = Math.floor(s / 60);
-  const ss = s % 60;
-  return String(m).padStart(2, "0") + ":" + String(ss).padStart(2, "0");
-};
-
-const useTimer = () => {
-  const [mode, setMode] = useState("timer");
-  const [duration, setDuration] = useState(25 * 60);
-  const [remaining, setRemaining] = useState(25 * 60);
-  const [elapsed, setElapsed] = useState(0);
-  const [running, setRunning] = useState(false);
-  const [done, setDone] = useState(false);
-  const { play } = useSoundCtx();
-
-  useEffect(() => {
-    if (!running) return;
-    const id = setInterval(() => {
-      if (mode === "timer") {
-        setRemaining((r) => {
-          if (r <= 1) {
-            setRunning(false); setDone(true);
-            try { play && play("complete"); } catch (e) {}
-            return 0;
-          }
-          return r - 1;
-        });
-      } else {
-        setElapsed((e) => e + 1);
-      }
-    }, 1000);
-    return () => clearInterval(id);
-  }, [running, mode, play]);
-
-  const setMode2 = (m) => {
-    setMode(m); setRunning(false); setDone(false);
-    setElapsed(0); setRemaining(duration);
-  };
-  const setDuration2 = (d) => {
-    setDuration(d); setRemaining(d); setRunning(false); setDone(false);
-  };
-  const start = () => { if (done) { setRemaining(duration); setDone(false); } setRunning(true); };
-  const pause = () => setRunning(false);
-  const reset = () => {
-    setRunning(false); setDone(false); setElapsed(0); setRemaining(duration);
-  };
-
-  const time = mode === "timer" ? fmtTime(remaining) : fmtTime(elapsed);
-  const percent = mode === "timer"
-    ? (duration ? (duration - remaining) / duration : 0)
-    : ((elapsed % 60) / 60);
-
-  return { mode, setMode: setMode2, duration, setDuration: setDuration2, time, percent, running, done, start, pause, reset };
 };
 
 const Study = ({ go }) => {
@@ -244,7 +214,6 @@ const Study = ({ go }) => {
     .sort((a, b) => a.createdAt - b.createdAt)
     .slice(0, POSITIONS.length);
 
-  // detect new additions for drop animation
   const lastIdRef = useRef(null);
   useEffect(() => {
     if (todays.length === 0) return;
@@ -255,8 +224,6 @@ const Study = ({ go }) => {
     }
     lastIdRef.current = lastId;
   }, [todays.map((t) => t.id).join(",")]);
-
-  const t = useTimer();
 
   return (
     <div className="study-room page-anim">
@@ -283,29 +250,7 @@ const Study = ({ go }) => {
             <span className="notebook-label">My Tasks</span>
             <span className="notebook-count">{todays.length}</span>
           </button>
-          <div className="timer-block">
-            <TimerRing time={t.done ? "Done!" : t.time} percent={t.percent} done={t.done} />
-            <div className="tabset" role="tablist" aria-label="Mode">
-              <button className="tab" role="tab" aria-selected={t.mode === "timer"}
-                onClick={() => t.setMode("timer")}>Timer</button>
-              <button className="tab" role="tab" aria-selected={t.mode === "stopwatch"}
-                onClick={() => t.setMode("stopwatch")}>Stopwatch</button>
-            </div>
-            {t.mode === "timer" && (
-              <div className="preset-row" role="group" aria-label="Duration presets">
-                {[15, 25, 45, 60].map((m) => (
-                  <button key={m} className="preset"
-                    aria-pressed={t.duration === m * 60}
-                    onClick={() => t.setDuration(m * 60)}>{m}m</button>
-                ))}
-              </div>
-            )}
-            <div className="timer-controls">
-              {!t.running && <Button variant="primary" onClick={t.start}>{t.done ? "Restart" : "Start"}</Button>}
-              {t.running && <Button variant="secondary" onClick={t.pause}>Pause</Button>}
-              <Button variant="ghost" style={{ color: "var(--text-on-dark)" }} onClick={t.reset}>Reset</Button>
-            </div>
-          </div>
+          <Watch defaultMode="timer" />
         </div>
       </div>
       <NotebookModal open={open} onClose={() => setOpen(false)} />

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { TodoProvider } from './context/AppContext';
-import { SoundProvider, SoundToggle } from './context/AppContext';
+import { TodoProvider, SoundProvider, SoundToggle } from './context/AppContext';
 import Hall from './components/Hall';
 import Study from './components/Study';
 import Meditate from './components/Meditate';
 
 const ROUTES = ["hall", "study", "meditate"];
+const PILL_ORDER = ["study", "hall", "meditate"];
 
 const useHashRoute = () => {
   const get = () => {
@@ -18,45 +18,37 @@ const useHashRoute = () => {
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
-  const go = (p) => {
-    window.location.hash = "#" + p;
-  };
+  const go = (p) => { window.location.hash = "#" + p; };
   return [page, go];
 };
 
+const RoomPills = ({ page, go }) => (
+  <nav className="room-pills" aria-label="Rooms">
+    {PILL_ORDER.map((r) => (
+      <button
+        key={r}
+        type="button"
+        onClick={() => go(r)}
+        aria-current={page === r ? "page" : undefined}
+        aria-label={`Go to ${r}`}
+      >
+        {r}
+      </button>
+    ))}
+  </nav>
+);
+
 const Shell = () => {
   const [page, go] = useHashRoute();
-  const [now, setNow] = useState(() => new Date());
-  useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 30000);
-    return () => clearInterval(id);
-  }, []);
-  const fmtTime = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   return (
     <div className="app">
-      <header className="app-header" role="banner">
-        <span className="app-brand">ClearMind</span>
-        <nav className="app-nav" aria-label="Rooms">
-          {ROUTES.map((r) => (
-            <button key={r}
-              onClick={() => go(r)}
-              aria-current={page === r ? "page" : undefined}>
-              {r[0].toUpperCase() + r.slice(1)}
-            </button>
-          ))}
-        </nav>
-      </header>
+      <RoomPills page={page} go={go} />
       <SoundToggle />
       <div key={page} style={{ position: "absolute", inset: 0 }}>
         {page === "hall"     && <Hall go={go} />}
         {page === "study"    && <Study go={go} />}
         {page === "meditate" && <Meditate go={go} />}
       </div>
-      <footer className="app-footer" role="contentinfo">
-        <span>ClearMind · A cozy mind-care space</span>
-        <span>{fmtTime}</span>
-        <span>v0.2 · Prototype</span>
-      </footer>
     </div>
   );
 };
