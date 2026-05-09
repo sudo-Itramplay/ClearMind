@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { TodoProvider } from './context/TodoContext';
 import { SoundProvider } from './context/SoundContext';
+import { ToastProvider } from './context/ToastContext';
 import RoomPills from './components/ui/RoomPills';
 import SoundToggle from './components/ui/SoundToggle';
-import Hall from './components/hall/Hall';
-import Study from './components/study/Study';
-import Meditate from './components/meditate/Meditate';
+import Hall from './views/Hall/Hall';
+import Study from './views/Study/Study';
+import Meditate from './views/Meditate/Meditate';
 
 const ROUTES = ["hall", "study", "meditate"];
 
@@ -41,9 +42,11 @@ const Shell = () => {
 
 const App = () => (
   <SoundProvider>
-    <TodoProvider>
-      <Shell />
-    </TodoProvider>
+    <ToastProvider>
+      <TodoProvider>
+        <Shell />
+      </TodoProvider>
+    </ToastProvider>
   </SoundProvider>
 );
 
