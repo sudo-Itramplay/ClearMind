@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
-import { QuickAddModal } from "../../features/quickAdd";
-import { useKeyAction } from "../../features/keybindings";
+import { QuickAddModal } from "../features/quickAdd";
+import { useKeyAction } from "../features/keybindings";
 
 const Ctx = createContext(null);
 export const useGlobalQuickAdd = () => useContext(Ctx);
