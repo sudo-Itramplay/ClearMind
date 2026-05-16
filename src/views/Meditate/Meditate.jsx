@@ -49,10 +49,11 @@ const Meditate = ({ go }) => {
   const [running, setRunning] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [complete, setComplete] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const { play } = useSoundCtx();
 
   useEffect(() => {
-    setRunning(false); setElapsed(0); setComplete(false); setPhase(0);
+    setRunning(false); setElapsed(0); setComplete(false); setPhase(0); setHasStarted(false);
   }, [modeKey]);
 
   useEffect(() => {
@@ -77,9 +78,12 @@ const Meditate = ({ go }) => {
 
   const start = () => {
     if (complete) { setComplete(false); setElapsed(0); setPhase(0); }
+    setHasStarted(true);
     setRunning(true);
   };
-  const remaining = Math.max(0, mode.duration * 60 - elapsed);
+  const totalSeconds = mode.duration * 60;
+  const remaining = Math.max(0, totalSeconds - elapsed);
+  const progress = Math.min(100, Math.round((elapsed / totalSeconds) * 100));
 
   return (
     <div className="meditate-room page-anim">
@@ -110,8 +114,20 @@ const Meditate = ({ go }) => {
               : (running ? mode.phases[phase].label + "…" : "Ready")}
           </div>
           <div className="session-time" aria-live="polite">
-            {complete ? `${mode.duration} min — well done` : `${fmt(remaining)} remaining`}
+            {complete ? `${mode.duration} min — well done` : (hasStarted ? `${fmt(remaining)} remaining` : "")}
           </div>
+          {(hasStarted || complete) && (
+            <div
+              className="session-progress"
+              role="progressbar"
+              aria-label="Meditation session progress"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={progress}
+            >
+              <div className="session-progress-fill" style={{ width: `${progress}%` }} />
+            </div>
+          )}
           <div className="med-actions">
             {!running && <Button variant="primary" onClick={start}>{complete ? "Begin Again" : "Start"}</Button>}
             {running && <Button variant="ghost" onClick={() => setRunning(false)}>Pause</Button>}
