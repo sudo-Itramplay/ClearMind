@@ -102,19 +102,14 @@
   grid-auto-rows: var(--sphere-size);
   gap: var(--sphere-gap);
   justify-content: center;
-  padding: 16px 22px;
-  background:
-    radial-gradient(
-      ellipse at 50% 30%,
-      rgba(212, 165, 116, 0.1),
-      transparent 70%
-    ),
-    rgba(0, 0, 0, 0.18);
-  border: 1px solid rgba(245, 230, 211, 0.06);
-  border-radius: 10px;
-  box-shadow:
-    inset 0 1px 0 rgba(245, 230, 211, 0.05),
-    var(--shadow-md);
+  padding: 20px 26px;
+
+  background: var(--cork-dark);
+  border: 4px solid var(--wood-light);
+  border-radius: var(--radius-md);
+  
+  
+  box-shadow: var(--shadow-lg), inset 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Day wrapper inside the calendar grid (anchor for popover) */
@@ -219,6 +214,10 @@
   transform: scale(1.18);
   filter: brightness(1.15);
   z-index: 2;
+
+  outline: 2px solid var(--amber-soft);
+  outline-offset: 2px;
+  box-shadow: 0 0 12px var(--amber-glow);
 }
 .sphere.open {
   transform: scale(1.25);

@@ -10,10 +10,11 @@ const MEDITATION_MODES = {
     icon: "⚡",
     duration: 3,
     phases: [
-      { label: "Inhale", duration: 2000 },
-      { label: "Hold",   duration: 1000 },
-      { label: "Exhale", duration: 2000 },
-      { label: "Hold",   duration: 1000 },
+      { label: "Inhale", duration: 2000, scale: 1.15, opacity: 1 },
+      { label: "Hold",   duration: 1000, scale: 1.15, opacity: 1 },
+      // Fem que es desinfli per sota de la seva mida original (0.85)
+      { label: "Exhale", duration: 2000, scale: 0.85, opacity: 0.85 },
+      { label: "Hold",   duration: 1000, scale: 0.85, opacity: 0.85 },
     ],
   },
   anxiety: {
@@ -21,10 +22,10 @@ const MEDITATION_MODES = {
     icon: "🌿",
     duration: 4,
     phases: [
-      { label: "Breathe In",  duration: 4000 },
-      { label: "Hold",        duration: 4000 },
-      { label: "Breathe Out", duration: 4000 },
-      { label: "Hold",        duration: 4000 },
+      { label: "Breathe In",  duration: 4000, scale: 1.15, opacity: 1 },
+      { label: "Hold",        duration: 4000, scale: 1.15, opacity: 1 },
+      { label: "Breathe Out", duration: 4000, scale: 0.85, opacity: 0.85 },
+      { label: "Hold",        duration: 4000, scale: 0.85, opacity: 0.85 },
     ],
   },
   sleep: {
@@ -32,9 +33,9 @@ const MEDITATION_MODES = {
     icon: "🌙",
     duration: 10,
     phases: [
-      { label: "Inhale", duration: 4000 },
-      { label: "Hold",   duration: 7000 },
-      { label: "Exhale", duration: 8000 },
+      { label: "Inhale", duration: 4000, scale: 1.15, opacity: 1 },
+      { label: "Hold",   duration: 7000, scale: 1.15, opacity: 1 },
+      { label: "Exhale", duration: 8000, scale: 0.85, opacity: 0.85 },
     ],
   },
 };
@@ -105,8 +106,17 @@ const Meditate = ({ go }) => {
             ))}
           </div>
           <div
-            className={"breath " + modeKey + (running ? "" : " paused") + (complete ? " complete" : "")}
+            className={"breath " + modeKey + (complete ? " complete" : "")}
             aria-hidden="true"
+            style={{
+              // Apliquem la mida i transparència de la fase actual si està corrent. Si està pausat, torna a 1.
+              transform: running ? `scale(${mode.phases[phase].scale})` : 'scale(1)',
+              opacity: running ? mode.phases[phase].opacity : 0.92,
+              // La transició dura exactament els mil·lisegons que dura la fase!
+              transition: running 
+                ? `all ${mode.phases[phase].duration}ms ease-in-out` 
+                : 'all 2s ease-in-out'
+            }}
           />
           <div className="breath-label" aria-live="polite">
             {complete
@@ -129,8 +139,42 @@ const Meditate = ({ go }) => {
             </div>
           )}
           <div className="med-actions">
-            {!running && <Button variant="primary" onClick={start}>{complete ? "Begin Again" : "Start"}</Button>}
-            {running && <Button variant="ghost" onClick={() => setRunning(false)}>Pause</Button>}
+            {/* 1. Si la sessió està en marxa */}
+            {running && (
+              <Button variant="ghost" onClick={() => setRunning(false)}>
+                Pause
+              </Button>
+            )}
+
+            {/* 2. Si no ha començat mai */}
+            {!running && !hasStarted && !complete && (
+              <Button variant="primary" onClick={start}>
+                Start
+              </Button>
+            )}
+
+            {/* 3. Si està pausada a mitges */}
+            {!running && hasStarted && !complete && (
+              <>
+                <Button variant="primary" onClick={() => setRunning(true)}>
+                  Continue
+                </Button>
+                <Button variant="ghost" onClick={() => {
+                  setElapsed(0);
+                  setPhase(0);
+                  setHasStarted(false);
+                }}>
+                  Reset
+                </Button>
+              </>
+            )}
+
+            {/* 4. Si ha acabat el temps */}
+            {!running && complete && (
+              <Button variant="primary" onClick={start}>
+                Tornar a començar
+              </Button>
+            )}
           </div>
         </div>
       </div>
