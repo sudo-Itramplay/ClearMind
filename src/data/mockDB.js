@@ -27,6 +27,23 @@ const seed = () => {
     { id: _id(), task: "Walk",                        description: "",                     date: _shift(-7), completed: true,  priority: "low",    createdAt: Date.now() - 2.2e5 },
     { id: _id(), task: "Submit form",                 description: "",                     date: _shift(-9), completed: true,  priority: "normal", createdAt: Date.now() - 2.5e5 },
     { id: _id(), task: "Standup",                     description: "",                     date: _shift(-12),completed: true,  priority: "low",    createdAt: Date.now() - 3e5 },
+
+    // --- Deures (homework) ---
+    { id: _id(), task: "Maths exercises 4.1–4.5",    description: "Derivatives worksheet",  date: t,            completed: false, priority: "normal", createdAt: Date.now() - 6e4 },
+    { id: _id(), task: "Physics problem set #3",      description: "Kinematics problems",    date: _shift(1),    completed: false, priority: "high",   createdAt: Date.now() - 7e4 },
+    { id: _id(), task: "English essay: Hamlet",        description: "1500 words, MLA format", date: _shift(3),    completed: false, priority: "high",   createdAt: Date.now() - 8e4 },
+    { id: _id(), task: "Programming lab 5",            description: "Binary trees in Java",   date: _shift(4),    completed: false, priority: "normal", createdAt: Date.now() - 9e4 },
+    { id: _id(), task: "History reading ch. 7–8",      description: "Cold War and aftermath", date: _shift(2),    completed: false, priority: "low",    createdAt: Date.now() - 1e5 },
+
+    // --- Preparació examen (exam prep for next week) ---
+    { id: _id(), task: "Review Calculus ch. 1–3",      description: "Summarize key formulas",  date: t,            completed: false, priority: "high",   createdAt: Date.now() - 1.1e5 },
+    { id: _id(), task: "Practice integrals exercises",  description: "Do 20 problems from the textbook", date: _shift(1), completed: false, priority: "high", createdAt: Date.now() - 1.2e5 },
+    { id: _id(), task: "Review Calculus ch. 4–5",       description: "Series and sequences",   date: _shift(2),    completed: false, priority: "high",   createdAt: Date.now() - 1.3e5 },
+    { id: _id(), task: "Solve past exam 2024",          description: "Time yourself: 90 min",  date: _shift(3),    completed: false, priority: "high",   createdAt: Date.now() - 1.4e5 },
+    { id: _id(), task: "Make formula cheat sheet",      description: "One A4 page, handwritten", date: _shift(4),  completed: false, priority: "normal", createdAt: Date.now() - 1.5e5 },
+    { id: _id(), task: "Flashcards: theorems & proofs", description: "All important theorems",  date: _shift(5),   completed: false, priority: "normal", createdAt: Date.now() - 1.6e5 },
+    { id: _id(), task: "Mock exam under timed conditions", description: "Simulate real exam environment", date: _shift(6), completed: false, priority: "high", createdAt: Date.now() - 1.7e5 },
+    { id: _id(), task: "EXAM: Calculus II",             description: "Room B204, 9:00–11:00. Bring calculator and ID.", date: _shift(7), completed: false, priority: "high", createdAt: Date.now() - 1.8e5 },
   ];
 };
 
