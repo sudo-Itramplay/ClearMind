@@ -26,11 +26,18 @@ const _tone = (freq, dur, type = "sine", vol = 0.15, attack = 0.01) => {
 };
 
 const SOUNDS = {
-  click:    () => _tone(360, 0.08, "triangle", 0.10),
-  tick:     () => { _tone(880, 0.04, "square", 0.05); _tone(440, 0.06, "triangle", 0.04); },
-  complete: () => { _tone(660, 0.18, "sine", 0.12); setTimeout(() => _tone(880, 0.32, "sine", 0.14), 90); },
-  gong:     () => { _tone(160, 0.6, "sine", 0.18); _tone(240, 0.6, "sine", 0.10); },
-  creak:    () => _tone(120, 0.18, "sawtooth", 0.04),
+  click:    () => _tone(360, 0.08, "triangle", 0.25),
+  tick:     () => { _tone(880, 0.04, "square", 0.25); _tone(440, 0.06, "triangle", 0.25); },
+  complete: () => { _tone(660, 0.18, "sine", 0.22); setTimeout(() => _tone(880, 0.32, "sine", 0.23), 90); },
+  gong:     () => { _tone(160, 0.6, "sine", 0.25); _tone(240, 0.6, "sine", 0.25); },
+  creak:    () => _tone(120, 0.18, "sawtooth", 0.25),
+  scratch:  () => {
+      const arxius = ['/check1.mp3', '/check2.mp3']; 
+      const arxiuAleatori = arxius[Math.floor(Math.random() * arxius.length)];
+      const audio = new Audio(arxiuAleatori);
+      audio.volume = 0.5; 
+      audio.play().catch(e => console.log("Error de so:", e));
+  }
 };
 
 const STORAGE_KEY = "clearmind-sound-enabled";

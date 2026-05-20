@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { mockDB } from '../data/mockDB';
+import { useSoundCtx } from './SoundContext';
 
 const TodoCtx = createContext(null);
 
@@ -9,6 +10,7 @@ export const TodoProvider = ({ children }) => {
   const [todos, setTodos] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { play } = useSoundCtx();
 
   useEffect(() => {
     let alive = true;
@@ -26,6 +28,9 @@ export const TodoProvider = ({ children }) => {
   const toggleTodo = async (id) => {
     const u = await mockDB.toggleTodo(id);
     setTodos((t) => t.map((x) => (x.id === id ? u : x)));
+    if (u.completed) {
+      play('scratch'); 
+    }
   };
   const deleteTodo = async (id) => {
     await mockDB.deleteTodo(id);
