@@ -1,6 +1,12 @@
 import React, { createContext, useCallback, useContext, useState, useEffect } from 'react';
 
-const SoundCtx = createContext({ enabled: false, toggle: () => {}, play: () => {} });
+const SoundCtx = createContext({ 
+  enabled: false, 
+  toggle: () => {}, 
+  play: () => {}, 
+  masterVolume: 0.5, 
+  setMasterVolume: () => {} 
+});
 
 export const useSoundCtx = () => useContext(SoundCtx);
 
@@ -30,14 +36,13 @@ let _ambientOsc1 = null;
 let _ambientOsc2 = null;
 let _ambientNoise = null;
 
-const _startAmbient = () => {
+const _startAmbient = (mv = 0.5) => {
   try {
     const ac = _ac();
     if (_ambientNode) return;
     
-    
     _ambientNode = ac.createGain();
-    _ambientNode.gain.value = 0.15;
+    _ambientNode.gain.value = 0.9 * mv; 
     _ambientNode.connect(ac.destination);
     
     // DO
@@ -45,7 +50,7 @@ const _startAmbient = () => {
     _ambientOsc1.type = "sine";
     _ambientOsc1.frequency.value = 130.81;
     const gain1 = ac.createGain();
-    gain1.gain.value = 0.2;
+    gain1.gain.value = 0.1;
     _ambientOsc1.connect(gain1).connect(_ambientNode);
     
     // SOL
@@ -53,7 +58,7 @@ const _startAmbient = () => {
     _ambientOsc2.type = "sine";
     _ambientOsc2.frequency.value = 196.22;
     const gain2 = ac.createGain();
-    gain2.gain.value = 0.3;
+    gain2.gain.value = 0.2;
     _ambientOsc2.connect(gain2).connect(_ambientNode);
     
     // SOROLL
@@ -72,19 +77,16 @@ const _startAmbient = () => {
     _ambientNoise.buffer = buffer;
     _ambientNoise.loop = true;
     
-    // SENSE AGUTS
     const noiseFilter = ac.createBiquadFilter();
     noiseFilter.type = "lowpass";
     noiseFilter.frequency.value = 500; 
     
-    
     const noiseGain = ac.createGain();
-    noiseGain.gain.value = 0.40; 
+    noiseGain.gain.value = 0.30; 
     
     _ambientNoise.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
     noiseGain.connect(_ambientNode);
-    
     
     _ambientOsc1.start();
     _ambientOsc2.start();
@@ -104,45 +106,53 @@ const _stopAmbient = () => {
   _ambientNoise = null;
 };
 const SOUNDS = {
-  click:    () => _tone(360, 0.08, "triangle", 0.25),
-  tick:     () => { _tone(880, 0.04, "square", 0.25); _tone(440, 0.06, "triangle", 0.25); },
-  complete: () => { _tone(660, 0.18, "sine", 0.22); setTimeout(() => _tone(880, 0.32, "sine", 0.23), 90); },
-  gong:     () => { _tone(160, 0.6, "sine", 0.25); _tone(240, 0.6, "sine", 0.25); },
-  creak:    () => _tone(120, 0.18, "sawtooth", 0.25),
-  scratch:  () => {
+  click:    (mv) => _tone(360, 0.08, "triangle", 0.25 * mv),
+  tick:     (mv) => { _tone(880, 0.04, "square", 0.25 * mv); _tone(440, 0.06, "triangle", 0.25 * mv); },
+  complete: (mv) => { _tone(660, 0.18, "sine", 0.22 * mv); setTimeout(() => _tone(880, 0.32, "sine", 0.23 * mv), 90); },
+  gong:     (mv) => { _tone(160, 0.6, "sine", 0.25 * mv); _tone(240, 0.6, "sine", 0.25 * mv); },
+  creak:    (mv) => _tone(120, 0.18, "sawtooth", 0.25 * mv),
+  scratch:  (mv) => {
       const arxius = ['/check1.mp3', '/check2.mp3']; 
       const arxiuAleatori = arxius[Math.floor(Math.random() * arxius.length)];
       const audio = new Audio(arxiuAleatori);
-      audio.volume = 0.5; 
+      audio.volume = 0.5 * mv; 
       audio.play().catch(e => console.log("Error de so:", e));
   }
 };
 
-const STORAGE_KEY = "clearmind-sound-enabled";
-
 export const SoundProvider = ({ children }) => {
   const [enabled, setEnabled] = useState(false);
+  const [masterVolume, setMasterVolume] = useState(0.5);
 
   useEffect(() => {
     if (enabled) {
-      _startAmbient();
+      _startAmbient(masterVolume);
     } else {
       _stopAmbient();
     }
     return () => _stopAmbient();
   }, [enabled]);
 
+
+  useEffect(() => {
+    if (_ambientNode) {
+      _ambientNode.gain.value = 0.9 * masterVolume;
+    }
+  }, [masterVolume]);
+
   const toggle = () => {
     const ac = _ac();
     if (ac.state === "suspended") ac.resume();
     setEnabled((v) => !v);
   };
+
   const play = useCallback((name) => {
     if (!enabled) return;
-    try { SOUNDS[name] && SOUNDS[name](); } catch (e) {}
-  }, [enabled]);
+    try { SOUNDS[name] && SOUNDS[name](masterVolume); } catch (e) {}
+  }, [enabled, masterVolume]);
+
   return (
-    <SoundCtx.Provider value={{ enabled, toggle, play }}>
+    <SoundCtx.Provider value={{ enabled, toggle, play, masterVolume, setMasterVolume, setEnabled }}>
       {children}
     </SoundCtx.Provider>
   );

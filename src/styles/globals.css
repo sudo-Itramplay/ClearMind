@@ -387,25 +387,89 @@ button {
   opacity: 1;
 }
 
-.sound-toggle {
+.sound-toggle-wrapper {
   position: fixed;
   top: 18px;
   right: 18px;
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  border: 1px solid rgba(245, 230, 211, 0.18);
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 0px;
   background: rgba(20, 14, 8, 0.55);
   backdrop-filter: blur(10px);
+  border: 1px solid rgba(245, 230, 211, 0.18);
+  border-radius: 24px;
+  padding: 0;
+  z-index: var(--z-toggle);
+  transition: padding-top 0.3s ease, background 0.3s ease, gap 0.3s ease;
+}
+
+
+.sound-toggle {
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+  border: none;
+  background: transparent;
   color: var(--cream);
   cursor: pointer;
   display: grid;
   place-items: center;
-  z-index: var(--z-toggle);
-  font-size: 1.05rem;
+  font-size: 1.35rem;
+  flex-shrink: 0;
 }
 .sound-toggle.on { color: var(--amber-glow); }
 
+
+.volume-slider-container {
+  height: 0px;
+  width: 40px;
+  opacity: 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: height 0.3s var(--ease-standard), opacity 0.3s var(--ease-standard);
+}
+
+
+.sound-toggle-wrapper:hover {
+  padding-top: 12px;
+  gap: 8px;
+  background: rgba(20, 14, 8, 0.85);
+}
+.sound-toggle-wrapper:hover .volume-slider-container,
+.sound-toggle-wrapper:focus-within .volume-slider-container {
+  height: 100px;
+  opacity: 1;
+}
+
+
+.volume-slider {
+  transform: rotate(-90deg);
+  width: 80px;  
+  height: 4px;
+  cursor: pointer;
+  accent-color: var(--amber-glow);
+  background: rgba(245, 230, 211, 0.2);
+  border-radius: 4px;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  margin: 0;
+}
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--amber-glow);
+  border: none;
+}
+
+@media (max-width: 640px) {
+  .sound-toggle-wrapper { top: 48px; }
+}
 .back-btn {
   position: absolute;
   top: 18px;
