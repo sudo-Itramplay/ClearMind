@@ -6,9 +6,9 @@ const dowMonFirst = (d) => (d.getDay() + 6) % 7;
 
 const intensityLevel = (pending, mean) => {
   if (pending === 0) return "none";
-  // Compare to the window's mean pending. <=0.5x = low, ~mean = med, >1.5x = high.
-  // Floor mean at 0.5 so an empty calendar still has a sensible scale.
-  const ratio = pending / Math.max(mean, 0.5);
+  // Floor at 2.5 so sparse demo data still spreads across all levels:
+  // 1 task → low, 2–3 → med, 4+ → high.
+  const ratio = pending / Math.max(mean, 2.5);
   if (ratio <= 0.5) return "low";
   if (ratio <= 1.5) return "med";
   return "high";

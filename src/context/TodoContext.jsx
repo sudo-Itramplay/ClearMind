@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { mockDB } from '../data/mockDB';
-import { useSoundCtx } from './SoundContext';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useSoundCtx } from "./SoundContext";
+import { mockDB, resetSeed } from "../data/mockDB";
 
 const TodoCtx = createContext(null);
 
@@ -14,10 +14,37 @@ export const TodoProvider = ({ children }) => {
 
   useEffect(() => {
     let alive = true;
-    mockDB.getTodos()
-      .then((d) => { if (alive) { setTodos(d); setLoading(false); } })
-      .catch((e) => { if (alive) { setError(e.message); setLoading(false); } });
-    return () => { alive = false; };
+    mockDB
+      .getTodos()
+      .then((d) => {
+        if (alive) {
+          setTodos(d);
+          setLoading(false);
+        }
+      })
+      .catch((e) => {
+        if (alive) {
+          setError(e.message);
+          setLoading(false);
+        }
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    window.resetDemo = () => {
+      resetSeed();
+      setLoading(true);
+      mockDB.getTodos().then((d) => {
+        setTodos(d);
+        setLoading(false);
+      });
+    };
+    return () => {
+      window.resetDemo = null;
+    };
   }, []);
 
   const addTodo = async (data) => {
@@ -29,7 +56,7 @@ export const TodoProvider = ({ children }) => {
     const u = await mockDB.toggleTodo(id);
     setTodos((t) => t.map((x) => (x.id === id ? u : x)));
     if (u.completed) {
-      play('scratch'); 
+      play("scratch");
     }
   };
   const deleteTodo = async (id) => {
@@ -42,7 +69,17 @@ export const TodoProvider = ({ children }) => {
   };
 
   return (
-    <TodoCtx.Provider value={{ todos, isLoading, error, addTodo, toggleTodo, deleteTodo, updateTodo }}>
+    <TodoCtx.Provider
+      value={{
+        todos,
+        isLoading,
+        error,
+        addTodo,
+        toggleTodo,
+        deleteTodo,
+        updateTodo,
+      }}
+    >
       {children}
     </TodoCtx.Provider>
   );
