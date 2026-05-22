@@ -172,7 +172,7 @@ const Meditate = ({ go }) => {
             {/* 4. Si ha acabat el temps */}
             {!running && complete && (
               <Button variant="primary" onClick={start}>
-                Tornar a començar
+                Start Over
               </Button>
             )}
           </div>

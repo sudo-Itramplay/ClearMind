@@ -55,10 +55,10 @@ const Stopwatch = () => {
       </div>
       <ConfirmDialog
         open={pendingReset}
-        title="Reiniciar el cronòmetre?"
-        message="El progrés de la sessió actual es perdrà."
-        cancelLabel="Cancel·lar"
-        confirmLabel="Reiniciar"
+        title="Reset Timer?"
+        message="The progress of the session will be lost"
+        cancelLabel="Cancel"
+        confirmLabel="Reset"
         onCancel={() => setPendingReset(false)}
         onConfirm={() => { sw.reset(); setPendingReset(false); }}
       />

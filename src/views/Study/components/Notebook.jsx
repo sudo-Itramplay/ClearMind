@@ -60,10 +60,10 @@ const Notebook = ({ open, onClose }) => {
       <AddTodoModal open={showAdd} onClose={() => setShowAdd(false)} />
       <ConfirmDialog
         open={!!pendingDelete}
-        title="Vols eliminar aquesta tasca?"
-        message="S'esborrarà de la pissarra."
-        cancelLabel="Conservar"
-        confirmLabel="Eliminar"
+        title="Delete task?"
+        message="It will be erased from the board."
+        cancelLabel="Preserve"
+        confirmLabel="Delete"
         danger
         onCancel={() => setPendingDelete(null)}
         onConfirm={() => {

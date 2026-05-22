@@ -50,10 +50,10 @@ const AddTodoModal = ({ open, onClose }) => {
       </Modal>
       <ConfirmDialog
         open={pendingDiscard}
-        title="Descartar canvis?"
-        message="Hi ha canvis sense guardar al formulari."
-        cancelLabel="Seguir editant"
-        confirmLabel="Descartar"
+        title="Discard changes?"
+        message="There are unsaved changes to the form."
+        cancelLabel="Continue editing"
+        confirmLabel="Discard"
         onCancel={() => setPendingDiscard(false)}
         onConfirm={confirmDiscard}
       />
