@@ -109,6 +109,8 @@
 /* Mode selector */
 .mode-row {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 10px;
   margin-top: -0.4rem;
   margin-bottom: 0.2rem;
@@ -233,7 +235,7 @@
 }
 
 /* Duration selector + objective row */
-.duration-row { display: flex; gap: 10px; }
+.duration-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 .dur-btn {
   font-size: 0.92rem;
   background: transparent;
@@ -271,7 +273,7 @@
   min-height: 28px;
 }
 
-.med-actions { display: flex; gap: 10px; }
+.med-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 
 /* ============================================================
    Plain mode (≤1024px)

@@ -775,6 +775,8 @@
 .timer-controls {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 /* ============================================================
@@ -1040,4 +1042,6 @@
 
 @media (max-width: 640px) {
   .timer-ring { width: 200px; height: 200px; }
+  /* Keep the exam banner from sliding under the bottom-right help button */
+  .exam-banner { max-width: calc(100vw - 72px); }
 }

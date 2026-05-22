@@ -631,7 +631,9 @@ button {
 @media (max-width: 640px) {
   html, body, #root { font-size: 16px; }
   .room-pills { top: 8px; }
-  .sound-toggle, .back-btn { top: 48px; }
+  /* Drop the side controls below the centered nav pills so nothing overlaps.
+     .auth-btn must move too — it's visible once Firebase sync is configured. */
+  .sound-toggle, .auth-btn, .back-btn { top: 48px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
