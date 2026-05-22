@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { TodoProvider } from './context/TodoContext';
+import { ExamProvider } from './context/ExamContext';
+import { AuthProvider } from './context/AuthContext';
 import { SoundProvider } from './context/SoundContext';
 import { ToastProvider } from './context/ToastContext';
 import { GlobalQuickAddProvider } from './components/GlobalQuickAddProvider';
 import RoomPills from './components/ui/RoomPills';
 import SoundToggle from './components/ui/SoundToggle';
+import AuthButton from './components/ui/AuthButton';
 import Hall from './views/Hall/Hall';
 import Study from './views/Study/Study';
 import Meditate from './views/Meditate/Meditate';
@@ -48,6 +51,7 @@ const Shell = () => {
     <div className="app">
       <RoomPills page={page} go={go} />
       <SoundToggle />
+      <AuthButton />
       <CheatsheetButton onClick={() => setHelpOpen(true)} />
       <div key={page} className="room-stage">
         {page === "hall"     && <Hall go={go} />}
@@ -62,14 +66,18 @@ const Shell = () => {
 const App = () => (
   <SoundProvider>
     <ToastProvider>
-      <TodoProvider>
-        <KeymapProvider>
-          <KeymapDefaults />
-          <GlobalQuickAddProvider>
-            <Shell />
-          </GlobalQuickAddProvider>
-        </KeymapProvider>
-      </TodoProvider>
+      <AuthProvider>
+        <TodoProvider>
+          <ExamProvider>
+            <KeymapProvider>
+              <KeymapDefaults />
+              <GlobalQuickAddProvider>
+                <Shell />
+              </GlobalQuickAddProvider>
+            </KeymapProvider>
+          </ExamProvider>
+        </TodoProvider>
+      </AuthProvider>
     </ToastProvider>
   </SoundProvider>
 );

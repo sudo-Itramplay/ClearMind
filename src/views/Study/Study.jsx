@@ -6,6 +6,8 @@ import CorkBoard from './components/CorkBoard';
 import { POSTIT_SLOTS } from './components/Postit';
 import Notebook from './components/Notebook';
 import Watch from './components/Watch';
+import ExamBanner from './components/ExamBanner';
+import CalendarModal from './components/CalendarModal';
 import { TodoEntryProvider } from './components/TodoEntryProvider';
 import './style/study.css';
 
@@ -14,6 +16,7 @@ const DROP_ANIM_MS = 600;
 const Study = ({ go }) => {
   const { todos, isLoading, toggleTodo } = useTodos();
   const [open, setOpen] = useState(false);
+  const [calOpen, setCalOpen] = useState(false);
   const [recentlyAdded, setRecentlyAdded] = useState(null);
 
   const today = dateToday();
@@ -40,6 +43,7 @@ const Study = ({ go }) => {
     <TodoEntryProvider>
       <div className="study-room page-anim">
         <BackButton onClick={() => go("hall")} />
+        <ExamBanner />
         <div className="study-grid">
           <CorkBoard
             tasks={todays}
@@ -48,15 +52,22 @@ const Study = ({ go }) => {
             onToggle={toggleTodo}
           />
           <div className="desk">
-            <button className="notebook" onClick={() => setOpen(true)} aria-label="Open My Tasks notebook">
-              <span className="notebook-stitch" aria-hidden="true" />
-              <span className="notebook-label">My Tasks</span>
-              <span className="notebook-count">{todays.length}</span>
-            </button>
+            <div className="desk-stack">
+              <button className="notebook" onClick={() => setOpen(true)} aria-label="Open My Tasks notebook">
+                <span className="notebook-stitch" aria-hidden="true" />
+                <span className="notebook-label">My Tasks</span>
+                <span className="notebook-count">{todays.length}</span>
+              </button>
+              <button className="cal-open-btn" onClick={() => setCalOpen(true)} aria-label="Open calendar">
+                <span className="cal-open-icon" aria-hidden="true" />
+                Calendar
+              </button>
+            </div>
             <Watch defaultMode="timer" />
           </div>
         </div>
         <Notebook open={open} onClose={() => setOpen(false)} />
+        <CalendarModal open={calOpen} onClose={() => setCalOpen(false)} />
       </div>
     </TodoEntryProvider>
   );

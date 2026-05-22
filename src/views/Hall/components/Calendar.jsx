@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTodos } from '../../../context/TodoContext';
+import { useExams } from '../../../context/ExamContext';
 import { useCalendarDays } from '../../../hooks/useCalendarDays';
 import Day from './Day';
 
@@ -15,9 +16,16 @@ const LEGEND = [
 
 const Calendar = () => {
   const { todos, isLoading } = useTodos();
+  const { exams, setExam, removeExam } = useExams();
   const { days, meanPending, totalCells } = useCalendarDays(todos);
   const [openKey, setOpenKey] = useState(null);
   const now = new Date();
+
+  const examDays = days.map((d) => ({
+    ...d,
+    isExam: d.key in exams,
+    examLabel: exams[d.key] || "",
+  }));
 
   const toggle = (key) => setOpenKey((prev) => (prev === key ? null : key));
   const meanLabel = meanPending.toFixed(1).replace(/\.0$/, "");
@@ -33,8 +41,15 @@ const Calendar = () => {
           ? Array.from({ length: totalCells }).map((_, i) => (
               <div key={i} className="day"><span className="sphere sphere-none" aria-hidden="true" /></div>
             ))
-          : days.map((d) => (
-              <Day key={d.key} day={d} isOpen={openKey === d.key} onToggle={() => toggle(d.key)} />
+          : examDays.map((d) => (
+              <Day
+                key={d.key}
+                day={d}
+                isOpen={openKey === d.key}
+                onToggle={() => toggle(d.key)}
+                onSetExam={(label) => setExam(d.key, label)}
+                onRemoveExam={() => removeExam(d.key)}
+              />
             ))}
       </div>
       <div
@@ -48,6 +63,10 @@ const Calendar = () => {
           </span>
         ))}
         <span className="legend-caption">More to do</span>
+      </div>
+      <div className="calendar-exam-hint">
+        <span className="exam-dot" aria-hidden="true" />
+        <span className="legend-caption">Exam day</span>
       </div>
     </div>
   );

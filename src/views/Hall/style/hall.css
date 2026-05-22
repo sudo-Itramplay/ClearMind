@@ -40,7 +40,7 @@
   position: relative;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  align-items: end;
+  align-items: start;
   padding: 50px 5vw 8px;
   z-index: 2;
 }
@@ -259,6 +259,33 @@
   background: radial-gradient(circle at 35% 35%, #ffe8b8, #f08c1a);
 }
 
+/* ============================================================
+   Exam markers — a crimson ring around the sphere + popover controls
+   ============================================================ */
+.exam-ring {
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 2px solid var(--exam, #e2574c);
+  box-shadow: 0 0 8px rgba(226, 87, 76, 0.55);
+  pointer-events: none;
+  z-index: 4;
+  transition: box-shadow var(--duration-base) ease;
+  animation: examPulse 2.4s ease-in-out infinite;
+}
+@keyframes examPulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(226, 87, 76, 0.45); }
+  50%      { box-shadow: 0 0 13px rgba(226, 87, 76, 0.8); }
+}
+
+.calendar-exam-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
 /* Day popover */
 .day-popover {
   position: absolute;
@@ -362,8 +389,8 @@
 .clock {
   grid-column: 3;
   justify-self: end;
-  align-self: end;
-  padding-bottom: 6px;
+  align-self: start;
+  padding-top: 6px;
 }
 .clock svg {
   display: block;

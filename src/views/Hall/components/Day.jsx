@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const fmtDate = (key) => {
   const [y, m, d] = key.split("-");
@@ -12,8 +12,13 @@ const LEVEL_LABEL = {
   high: "heavy load",
 };
 
-const Day = ({ day, isOpen, onToggle }) => {
+const Day = ({ day, isOpen, onToggle, onSetExam, onRemoveExam }) => {
   const ref = useRef(null);
+  const [draft, setDraft] = useState("");
+
+  useEffect(() => {
+    if (isOpen) setDraft(day.examLabel || "");
+  }, [isOpen, day.examLabel]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -35,13 +40,21 @@ const Day = ({ day, isOpen, onToggle }) => {
     day.isToday ? "today" : "",
     day.isPast ? "past" : "",
     day.allDone ? "all-done" : "",
+    day.isExam ? "exam" : "",
     isOpen ? "open" : "",
   ].join(" ").trim();
 
-  const aria = `${fmtDate(day.key)} — ${day.pending} pending of ${day.total} task${day.total === 1 ? "" : "s"} (${LEVEL_LABEL[day.level]})`;
+  const examAria = day.isExam ? `, exam day${day.examLabel ? `: ${day.examLabel}` : ""}` : "";
+  const aria = `${fmtDate(day.key)} — ${day.pending} pending of ${day.total} task${day.total === 1 ? "" : "s"} (${LEVEL_LABEL[day.level]})${examAria}`;
+
+  const submitExam = (e) => {
+    e.preventDefault();
+    onSetExam && onSetExam(draft.trim());
+  };
 
   return (
     <div ref={ref} className="day">
+      {day.isExam && <span className="exam-ring" aria-hidden="true" />}
       <button
         type="button"
         className={sphereCls}
@@ -58,6 +71,12 @@ const Day = ({ day, isOpen, onToggle }) => {
             <strong>{fmtDate(day.key)}{day.isToday ? " · Today" : ""}</strong>
             <span className="muted">{day.done}/{day.total} done</span>
           </div>
+          {day.isExam && (
+            <div className="day-exam-tag">
+              <span className="exam-dot" aria-hidden="true" />
+              {day.examLabel || "Exam day"}
+            </div>
+          )}
           {day.tasks.length === 0 ? (
             <div className="day-popover-empty">No tasks</div>
           ) : (
@@ -70,6 +89,28 @@ const Day = ({ day, isOpen, onToggle }) => {
               ))}
             </ul>
           )}
+          <div className="day-exam-actions">
+            {day.isExam ? (
+              <button
+                type="button"
+                className="day-exam-btn remove"
+                onClick={() => onRemoveExam && onRemoveExam()}
+              >
+                Remove exam
+              </button>
+            ) : (
+              <form className="day-exam-form" onSubmit={submitExam}>
+                <input
+                  type="text"
+                  className="day-exam-input"
+                  placeholder="Exam name (optional)"
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                />
+                <button type="submit" className="day-exam-btn">Mark as exam</button>
+              </form>
+            )}
+          </div>
         </div>
       )}
     </div>

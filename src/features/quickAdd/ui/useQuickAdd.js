@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTodos } from "../../../context/TodoContext";
+import { useExams } from "../../../context/ExamContext";
 import { useToast } from "../../../context/ToastContext";
 import { dateToday } from "../../../data/mockDB";
 import { QUICK_ADD_CONFIG } from "../config/quickAddConfig";
@@ -19,6 +20,7 @@ const fmtDate = (key) => {
 
 export const useQuickAdd = ({ clock = realClock, onAdded } = {}) => {
   const { addTodo } = useTodos();
+  const { setExam } = useExams();
   const { push } = useToast();
   const [text, setText] = useState("");
 
@@ -38,8 +40,9 @@ export const useQuickAdd = ({ clock = realClock, onAdded } = {}) => {
       date: parsed.date || dateToday(),
     };
     const todo = await addTodo(data);
+    if (parsed.isExam) setExam(data.date, data.task);
     const when = data.date === dateToday() ? "today" : fmtDate(data.date);
-    push({ message: `Task added for ${when}` });
+    push({ message: parsed.isExam ? `Exam added for ${when}` : `Task added for ${when}` });
     setText("");
     onAdded && onAdded(todo);
     return todo;

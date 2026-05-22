@@ -19,6 +19,9 @@ const CHEAT_SHEET = [
     { kw: "mn tu we th fr sa su", note: "this week's weekday" },
     { kw: "nxmn … nxsu", note: "the one after" },
   ]},
+  { title: "Exam", items: [
+    { kw: "exam", note: "flag the day as an exam" },
+  ]},
 ];
 
 const QuickAddInput = ({ onSubmitted, onMoreOptions, autoFocus = true }) => {
@@ -64,7 +67,10 @@ const QuickAddInput = ({ onSubmitted, onMoreOptions, autoFocus = true }) => {
         {parsed.date && (
           <span className="qa-chip qa-chip-date">{parsed.date}</span>
         )}
-        {!parsed.priority && !parsed.date && (
+        {parsed.isExam && (
+          <span className="qa-chip qa-chip-exam">Exam</span>
+        )}
+        {!parsed.priority && !parsed.date && !parsed.isExam && (
           <span className="qa-hint">No priority or date detected — defaults are P2 + today.</span>
         )}
       </div>

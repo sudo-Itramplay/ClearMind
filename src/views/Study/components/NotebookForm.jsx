@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Button from '../../../components/ui/Button';
 import { dateToday } from '../../../data/mockDB';
+import { parseQuickInput, QUICK_ADD_CONFIG, realClock } from '../../../features/quickAdd';
 
 const PRIORITIES = ["low", "normal", "high"];
 
@@ -9,15 +10,26 @@ const NotebookForm = ({ onSubmit, onCancel, onDirty }) => {
   const [desc, setDesc] = useState("");
   const [priority, setPriority] = useState("normal");
   const [date, setDate] = useState(dateToday());
+  const [isExam, setIsExam] = useState(false);
   const [error, setError] = useState(null);
+
+  // The task field understands the same shorthand as Quick Add. Detected
+  // keywords fill the controls below and are stripped from the saved title.
+  const parsed = useMemo(() => parseQuickInput(task, QUICK_ADD_CONFIG, realClock), [task]);
+  useEffect(() => { if (parsed.priority) setPriority(parsed.priority); }, [parsed.priority]);
+  useEffect(() => { if (parsed.date) setDate(parsed.date); }, [parsed.date]);
+  useEffect(() => { if (parsed.isExam) setIsExam(true); }, [parsed.isExam]);
+
+  const cleanTask = parsed.task.trim();
+  const detected = parsed.priority || parsed.date || parsed.isExam;
 
   const dirty = !!(task.trim() || desc.trim());
   useEffect(() => { onDirty && onDirty(dirty); }, [dirty, onDirty]);
 
   const submit = (e) => {
     e.preventDefault();
-    if (!task.trim()) { setError("Task is required."); return; }
-    onSubmit({ task: task.trim(), description: desc.trim(), priority, date });
+    if (!cleanTask) { setError("Task is required."); return; }
+    onSubmit({ task: cleanTask, description: desc.trim(), priority, date, isExam });
   };
 
   return (
@@ -32,9 +44,18 @@ const NotebookForm = ({ onSubmit, onCancel, onDirty }) => {
           onChange={(e) => { setTask(e.target.value); if (error) setError(null); }}
           aria-invalid={!!error}
           aria-describedby={error ? "nb-task-err" : undefined}
-          placeholder="What's on your mind?"
+          placeholder="e.g. Maths exam nxmn p1"
         />
         {error && <span id="nb-task-err" className="nb-error" role="alert">{error}</span>}
+        {detected && (
+          <div className="nb-parsed" aria-live="polite">
+            <span className="nb-parsed-label">Detected:</span>
+            {parsed.priority && <span className={"qa-chip qa-chip-prio prio-" + parsed.priority}>{parsed.priority}</span>}
+            {parsed.date && <span className="qa-chip qa-chip-date">{parsed.date}</span>}
+            {parsed.isExam && <span className="qa-chip qa-chip-exam">Exam</span>}
+            <span className="nb-parsed-note">— saved as “{cleanTask || "…"}”</span>
+          </div>
+        )}
       </div>
       <div className="nb-field">
         <label htmlFor="nb-desc">Description</label>
@@ -69,6 +90,18 @@ const NotebookForm = ({ onSubmit, onCancel, onDirty }) => {
       <div className="nb-field">
         <label htmlFor="nb-date">Date</label>
         <input id="nb-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+      </div>
+      <div className="nb-field nb-exam-field">
+        <label className="nb-exam-check" htmlFor="nb-exam">
+          <input
+            id="nb-exam"
+            type="checkbox"
+            checked={isExam}
+            onChange={(e) => setIsExam(e.target.checked)}
+          />
+          <span className="exam-dot" aria-hidden="true" />
+          Mark this day as an exam
+        </label>
       </div>
       <div className="nb-form-actions">
         <Button type="submit" variant="primary">Pin to Board</Button>

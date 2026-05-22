@@ -3,6 +3,7 @@ import Modal from '../../../components/ui/Modal';
 import ConfirmDialog from '../../../components/ui/ConfirmDialog';
 import NotebookForm from './NotebookForm';
 import { useTodos } from '../../../context/TodoContext';
+import { useExams } from '../../../context/ExamContext';
 import { useToast } from '../../../context/ToastContext';
 import { dateToday } from '../../../data/mockDB';
 
@@ -14,14 +15,17 @@ const fmtDate = (key) => {
 
 const AddTodoModal = ({ open, onClose }) => {
   const { addTodo } = useTodos();
+  const { setExam } = useExams();
   const { push } = useToast();
   const [dirty, setDirty] = useState(false);
   const [pendingDiscard, setPendingDiscard] = useState(false);
 
   const submit = async (data) => {
-    await addTodo(data);
-    const when = data.date === dateToday() ? "today" : fmtDate(data.date);
-    push({ message: `Task added for ${when}` });
+    const { isExam, ...todo } = data;
+    await addTodo(todo);
+    if (isExam) setExam(todo.date, todo.task);
+    const when = todo.date === dateToday() ? "today" : fmtDate(todo.date);
+    push({ message: isExam ? `Exam added for ${when}` : `Task added for ${when}` });
     setDirty(false);
     onClose && onClose();
   };

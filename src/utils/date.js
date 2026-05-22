@@ -16,3 +16,12 @@ export const localDateShift = (n, base = new Date()) => {
   d.setDate(d.getDate() + n);
   return localDateKey(d);
 };
+
+// Whole days from `base` to a YYYY-MM-DD key. Negative = in the past, 0 = today.
+// Both sides are normalized to local midnight so DST shifts don't leak in.
+export const daysUntil = (key, base = new Date()) => {
+  const [y, m, d] = key.split("-").map(Number);
+  const target = new Date(y, m - 1, d);
+  const from = new Date(base.getFullYear(), base.getMonth(), base.getDate());
+  return Math.round((target - from) / 86400000);
+};

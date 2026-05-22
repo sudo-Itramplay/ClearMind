@@ -5,12 +5,16 @@ export const TOKEN = Object.freeze({
   TEXT: "text",
   PRIORITY: "priority",
   DATE: "date",
+  EXAM: "exam",
 });
 
 const classify = (word, config) => {
   const lower = word.toLowerCase();
-  const { priorityAliases, dateKeywords, nextWeekdayPrefix, weekdayCodes } = config;
+  const { priorityAliases, dateKeywords, nextWeekdayPrefix, weekdayCodes, examKeywords } = config;
 
+  if (examKeywords && lower in examKeywords) {
+    return { kind: TOKEN.EXAM, raw: word, value: true };
+  }
   if (lower in priorityAliases) {
     return { kind: TOKEN.PRIORITY, raw: word, value: priorityAliases[lower] };
   }

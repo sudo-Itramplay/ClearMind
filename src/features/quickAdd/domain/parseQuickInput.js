@@ -13,6 +13,7 @@ export const parseQuickInput = (input, config, clock) => {
     task,
     priority: resolvePriority(tokens),
     date: resolveDate(tokens, clock),
+    isExam: tokens.some((t) => t.kind === TOKEN.EXAM),
     tokens,
   };
 };

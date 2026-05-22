@@ -45,6 +45,10 @@
   font-family: "JetBrains Mono", ui-monospace, monospace;
   text-transform: none;
 }
+.qa-chip-exam {
+  background: var(--exam, #e2574c);
+  color: #fff;
+}
 
 .qa-hint {
   font-size: 0.82rem;

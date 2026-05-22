@@ -32,9 +32,17 @@ export const WEEKDAY_CODES = {
   sa: 6,
 };
 
+// Marking a task as an exam also flags its date as an exam day on the calendar
+// (the remaining text becomes the exam label). Kept to the single unambiguous
+// word "exam" so it doesn't strip everyday tasks like "write unit test".
+export const EXAM_KEYWORDS = {
+  exam: true,
+};
+
 export const QUICK_ADD_CONFIG = {
   priorityAliases: PRIORITY_ALIASES,
   dateKeywords: DATE_KEYWORDS,
   nextWeekdayPrefix: NEXT_WEEKDAY_PREFIX,
   weekdayCodes: WEEKDAY_CODES,
+  examKeywords: EXAM_KEYWORDS,
 };
