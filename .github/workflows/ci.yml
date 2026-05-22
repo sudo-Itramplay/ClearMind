@@ -1,0 +1,32 @@
+# Porta de qualitat (equivalent al ci.yml de MacroAI, adaptat a JS/React):
+# auditoria de dependències + build de producció. Si alguna passa falla, el build falla.
+name: Revisió de Codi
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  qualitat:
+    name: Dependències i build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtenir el codi
+        uses: actions/checkout@v4
+
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Instal·lar dependències
+        run: npm ci
+
+      - name: Auditoria de seguretat (npm audit)
+        run: npm audit --audit-level=high
+
+      - name: Build de producció
+        run: npm run build

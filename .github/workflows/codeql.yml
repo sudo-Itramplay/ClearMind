@@ -1,0 +1,35 @@
+# Escaneig de seguretat del codi amb CodeQL — l'equivalent en JS del Bandit de MacroAI.
+# Els resultats apareixen a la pestanya "Security" del repositori de GitHub.
+name: Anàlisi de seguretat (CodeQL)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: "0 6 * * 1"   # cada dilluns a les 06:00 UTC, per detectar avisos nous
+
+jobs:
+  analyze:
+    name: Escaneig de codi (CodeQL)
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+    steps:
+      - name: Obtenir el codi
+        uses: actions/checkout@v4
+
+      - name: Inicialitzar CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          build-mode: none
+          queries: security-extended
+
+      - name: Analitzar amb CodeQL
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript-typescript"
