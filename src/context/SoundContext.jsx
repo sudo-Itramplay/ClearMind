@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useState, useEffect } from 'react';
 
+
 const SoundCtx = createContext({ 
   enabled: false, 
   toggle: () => {}, 
@@ -112,7 +113,7 @@ const SOUNDS = {
   gong:     (mv) => { _tone(160, 0.6, "sine", 0.25 * mv); _tone(240, 0.6, "sine", 0.25 * mv); },
   creak:    (mv) => _tone(120, 0.18, "sawtooth", 0.25 * mv),
   scratch:  (mv) => {
-      const arxius = ['/check1.mp3', '/check2.mp3']; 
+      const arxius = ['./check1.mp3', './check2.mp3']; 
       const arxiuAleatori = arxius[Math.floor(Math.random() * arxius.length)];
       const audio = new Audio(arxiuAleatori);
       audio.volume = 0.5 * mv; 
