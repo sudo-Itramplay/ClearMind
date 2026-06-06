@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
-import TimerRing from './TimerRing';
-import Button from '../../../components/ui/Button';
-import ConfirmDialog from '../../../components/ui/ConfirmDialog';
-import { useStopwatch } from '../../../hooks/useStopwatch';
+import React, { useState } from "react";
+import TimerRing from "./TimerRing";
+import Button from "../../../components/ui/Button";
+import ConfirmDialog from "../../../components/ui/ConfirmDialog";
+import { useStopwatch } from "../../../hooks/useStopwatch";
 
-const GOAL_PRESETS = [30, 60, 90, 120]; // minutes
+const GOAL_PRESETS = [60, 90, 120, 150, 180]; // minutes
 const DEFAULT_GOAL = 60 * 60; // seconds
 
 const fmtTime = (s) => {
   s = Math.max(0, Math.floor(s));
-  return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+  return (
+    String(Math.floor(s / 60)).padStart(2, "0") +
+    ":" +
+    String(s % 60).padStart(2, "0")
+  );
 };
 
 const Stopwatch = () => {
@@ -30,7 +34,11 @@ const Stopwatch = () => {
 
   return (
     <>
-      <TimerRing time={fmtTime(sw.elapsed)} showProgress={false} paled={reached} />
+      <TimerRing
+        time={fmtTime(sw.elapsed)}
+        showProgress={false}
+        paled={reached}
+      />
       <div className="goal-row" role="group" aria-label="Study time goal">
         <span className="goal-label">Goal</span>
         {GOAL_PRESETS.map((m) => (
@@ -45,13 +53,26 @@ const Stopwatch = () => {
           </button>
         ))}
       </div>
-      <div className={"stopwatch-status" + (reached ? " reached" : "")} aria-live="polite">
+      <div
+        className={"stopwatch-status" + (reached ? " reached" : "")}
+        aria-live="polite"
+      >
         {statusText}
       </div>
       <div className="timer-controls">
-        {!sw.running && <Button variant="primary" onClick={sw.start}>Start</Button>}
-        {sw.running && <Button variant="secondary" onClick={sw.pause}>Pause</Button>}
-        <Button variant="ghost" onClick={handleReset}>Reset</Button>
+        {!sw.running && (
+          <Button variant="primary" onClick={sw.start}>
+            Start
+          </Button>
+        )}
+        {sw.running && (
+          <Button variant="secondary" onClick={sw.pause}>
+            Pause
+          </Button>
+        )}
+        <Button variant="ghost" onClick={handleReset}>
+          Reset
+        </Button>
       </div>
       <ConfirmDialog
         open={pendingReset}
@@ -60,7 +81,10 @@ const Stopwatch = () => {
         cancelLabel="Cancel·lar"
         confirmLabel="Reiniciar"
         onCancel={() => setPendingReset(false)}
-        onConfirm={() => { sw.reset(); setPendingReset(false); }}
+        onConfirm={() => {
+          sw.reset();
+          setPendingReset(false);
+        }}
       />
     </>
   );
