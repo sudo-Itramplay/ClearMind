@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
-import Modal from '../../../components/ui/Modal';
-import Button from '../../../components/ui/Button';
-import ConfirmDialog from '../../../components/ui/ConfirmDialog';
-import TaskFormModal from './TaskFormModal';
-import { useTodos } from '../../../context/TodoContext';
-import { dateToday } from '../../../data/mockDB';
+import React, { useState } from "react";
+import Modal from "../../../components/ui/Modal";
+import Button from "../../../components/ui/Button";
+import ConfirmDialog from "../../../components/ui/ConfirmDialog";
+import TaskFormModal from "./TaskFormModal";
+import { useTodos } from "../../../context/TodoContext";
+import { dateToday } from "../../../data/mockDB";
 
 // "2026-05-15" → "May 15". Shown on non-today rows so the day is unambiguous.
 const fmtDate = (key) => {
   const [y, m, d] = key.split("-").map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  return new Date(y, m - 1, d).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
 };
 
 const Notebook = ({ open, onClose }) => {
@@ -27,9 +30,21 @@ const Notebook = ({ open, onClose }) => {
         b.createdAt - a.createdAt,
     );
   const groups = [
-    { key: "earlier", label: "Earlier", items: sorted.filter((t) => t.date < today) },
-    { key: "today", label: "Today", items: sorted.filter((t) => t.date === today) },
-    { key: "upcoming", label: "Upcoming", items: sorted.filter((t) => t.date > today) },
+    {
+      key: "today",
+      label: "Today",
+      items: sorted.filter((t) => t.date === today),
+    },
+    {
+      key: "upcoming",
+      label: "Upcoming",
+      items: sorted.filter((t) => t.date > today),
+    },
+    {
+      key: "earlier",
+      label: "Earlier",
+      items: sorted.filter((t) => t.date < today),
+    },
   ].filter((g) => g.items.length);
 
   const todays = todos.filter((t) => t.date === today);
@@ -48,14 +63,19 @@ const Notebook = ({ open, onClose }) => {
       <Modal open={open} onClose={requestCloseModal} labelledBy="nb-title">
         <h2 id="nb-title">My Tasks</h2>
         <p className="muted nb-summary">
-          {todays.length} for today · {todays.filter((t) => t.completed).length} done
+          {todays.length} for today · {todays.filter((t) => t.completed).length}{" "}
+          done
         </p>
         <div className="nb-add">
-          <Button variant="primary" onClick={() => setShowAdd(true)}>+ New task</Button>
+          <Button variant="primary" onClick={() => setShowAdd(true)}>
+            + New task
+          </Button>
         </div>
 
         {groups.length === 0 && (
-          <p className="nb-empty nb-empty-block">Nothing yet — add your first task.</p>
+          <p className="nb-empty nb-empty-block">
+            Nothing yet — add your first task.
+          </p>
         )}
 
         <div className="nb-scroll">
@@ -79,12 +99,34 @@ const Notebook = ({ open, onClose }) => {
                     </button>
                     <div className="nb-task">
                       {t.task}
-                      {g.key !== "today" && <span className="nb-when">{fmtDate(t.date)}</span>}
-                      {t.description && <span className="nb-desc">{t.description}</span>}
+                      {g.key !== "today" && (
+                        <span className="nb-when">{fmtDate(t.date)}</span>
+                      )}
+                      {t.description && (
+                        <span className="nb-desc">{t.description}</span>
+                      )}
                     </div>
-                    <span className={"pt-prio pt-prio-static nb-prio " + (t.priority || "normal")} aria-hidden="true" />
-                    <button className="nb-edit" aria-label={"Edit " + t.task} onClick={() => setEditing(t)}>✎</button>
-                    <button className="nb-del" aria-label={"Delete " + t.task} onClick={() => setPendingDelete(t)}>×</button>
+                    <span
+                      className={
+                        "pt-prio pt-prio-static nb-prio " +
+                        (t.priority || "normal")
+                      }
+                      aria-hidden="true"
+                    />
+                    <button
+                      className="nb-edit"
+                      aria-label={"Edit " + t.task}
+                      onClick={() => setEditing(t)}
+                    >
+                      ✎
+                    </button>
+                    <button
+                      className="nb-del"
+                      aria-label={"Delete " + t.task}
+                      onClick={() => setPendingDelete(t)}
+                    >
+                      ×
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -93,7 +135,11 @@ const Notebook = ({ open, onClose }) => {
         </div>
       </Modal>
       <TaskFormModal open={showAdd} onClose={() => setShowAdd(false)} />
-      <TaskFormModal open={!!editing} editing={editing} onClose={() => setEditing(null)} />
+      <TaskFormModal
+        open={!!editing}
+        editing={editing}
+        onClose={() => setEditing(null)}
+      />
       <ConfirmDialog
         open={!!pendingDelete}
         title="Vols eliminar aquesta tasca?"
