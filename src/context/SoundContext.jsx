@@ -5,14 +5,14 @@ const SoundCtx = createContext({ enabled: false, toggle: () => {}, play: () => {
 export const useSoundCtx = () => useContext(SoundCtx);
 
 let _audio = null;
-const _ac = () => {
+const _ac = async () => {
   if (!_audio) _audio = new (window.AudioContext || window.webkitAudioContext)();
-  if (_audio.state === "suspended") _audio.resume();
+  if (_audio.state === "suspended") await _audio.resume();
   return _audio;
 };
 
-const _tone = (freq, dur, type = "sine", vol = 0.15, attack = 0.01) => {
-  const ac = _ac();
+const _tone = async (freq, dur, type = "sine", vol = 0.15, attack = 0.01) => {
+  const ac = await _ac();
   const o = ac.createOscillator();
   const g = ac.createGain();
   o.type = type;
@@ -44,9 +44,9 @@ export const SoundProvider = ({ children }) => {
     try { localStorage.setItem(STORAGE_KEY, n ? "1" : "0"); } catch (e) {}
     return n;
   });
-  const play = useCallback((name) => {
+  const play = useCallback(async (name) => {
     if (!enabled) return;
-    try { SOUNDS[name] && SOUNDS[name](); } catch (e) {}
+    try { SOUNDS[name] && await SOUNDS[name](); } catch (e) {}
   }, [enabled]);
   return (
     <SoundCtx.Provider value={{ enabled, toggle, play }}>
