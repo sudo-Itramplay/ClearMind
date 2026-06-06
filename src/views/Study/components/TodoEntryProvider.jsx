@@ -6,7 +6,7 @@ import React, {
 } from "react";
 import { QuickAddModal } from "../../../features/quickAdd";
 import { useKeyAction } from "../../../features/keybindings";
-import AddTodoModal from "./AddTodoModal";
+import TaskFormModal from "./TaskFormModal";
 
 // Orchestrates the two task-entry modes (quick / full). The "Q" hotkey is
 // declared globally in keymapConfig — we just register the handler here,
@@ -37,7 +37,7 @@ export const TodoEntryProvider = ({ children }) => {
         onClose={close}
         onMoreOptions={openFull}
       />
-      <AddTodoModal open={mode === "full"} onClose={close} />
+      <TaskFormModal open={mode === "full"} onClose={close} />
     </Ctx.Provider>
   );
 };

@@ -13,19 +13,33 @@ const fmtDate = (key) => {
   return new Date(y, m - 1, d).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 };
 
-const AddTodoModal = ({ open, onClose }) => {
-  const { addTodo } = useTodos();
-  const { setExam } = useExams();
+// Single form used for both creating a task and editing an existing one.
+// Pass `editing` (a todo) to switch into edit mode; omit it to add.
+const TaskFormModal = ({ open, onClose, editing }) => {
+  const { addTodo, updateTodo } = useTodos();
+  const { exams, setExam, removeExam } = useExams();
   const { push } = useToast();
   const [dirty, setDirty] = useState(false);
   const [pendingDiscard, setPendingDiscard] = useState(false);
 
+  const isEdit = !!editing;
+  // In edit mode the exam checkbox reflects whether the task's day is an exam.
+  const initial = editing ? { ...editing, isExam: editing.date in exams } : undefined;
+
   const submit = async (data) => {
     const { isExam, ...todo } = data;
-    await addTodo(todo);
-    if (isExam) setExam(todo.date, todo.task);
-    const when = todo.date === dateToday() ? "today" : fmtDate(todo.date);
-    push({ message: isExam ? `Exam added for ${when}` : `Task added for ${when}` });
+    if (isEdit) {
+      await updateTodo(editing.id, todo);
+      // Exam is a property of the day, so apply it to the (possibly new) date.
+      if (isExam) setExam(todo.date, todo.task);
+      else if (editing.date in exams) removeExam(editing.date);
+      push({ message: "Task updated" });
+    } else {
+      await addTodo(todo);
+      if (isExam) setExam(todo.date, todo.task);
+      const when = todo.date === dateToday() ? "today" : fmtDate(todo.date);
+      push({ message: isExam ? `Exam added for ${when}` : `Task added for ${when}` });
+    }
     setDirty(false);
     onClose && onClose();
   };
@@ -44,9 +58,12 @@ const AddTodoModal = ({ open, onClose }) => {
 
   return (
     <>
-      <Modal open={open} onClose={requestClose} labelledBy="add-todo-title">
-        <h2 id="add-todo-title">New task</h2>
+      <Modal open={open} onClose={requestClose} labelledBy="task-form-title">
+        <h2 id="task-form-title">{isEdit ? "Edit task" : "New task"}</h2>
         <NotebookForm
+          key={editing ? editing.id : "new"}
+          initial={initial}
+          submitLabel={isEdit ? "Save changes" : "Pin to Board"}
           onSubmit={submit}
           onCancel={requestClose}
           onDirty={setDirty}
@@ -65,4 +82,4 @@ const AddTodoModal = ({ open, onClose }) => {
   );
 };
 
-export default AddTodoModal;
+export default TaskFormModal;

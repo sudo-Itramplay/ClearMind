@@ -5,12 +5,12 @@ import { parseQuickInput, QUICK_ADD_CONFIG, realClock } from '../../../features/
 
 const PRIORITIES = ["low", "normal", "high"];
 
-const NotebookForm = ({ onSubmit, onCancel, onDirty }) => {
-  const [task, setTask] = useState("");
-  const [desc, setDesc] = useState("");
-  const [priority, setPriority] = useState("normal");
-  const [date, setDate] = useState(dateToday());
-  const [isExam, setIsExam] = useState(false);
+const NotebookForm = ({ onSubmit, onCancel, onDirty, initial, submitLabel = "Pin to Board" }) => {
+  const [task, setTask] = useState(initial?.task || "");
+  const [desc, setDesc] = useState(initial?.description || "");
+  const [priority, setPriority] = useState(initial?.priority || "normal");
+  const [date, setDate] = useState(initial?.date || dateToday());
+  const [isExam, setIsExam] = useState(initial?.isExam || false);
   const [error, setError] = useState(null);
 
   // The task field understands the same shorthand as Quick Add. Detected
@@ -23,7 +23,15 @@ const NotebookForm = ({ onSubmit, onCancel, onDirty }) => {
   const cleanTask = parsed.task.trim();
   const detected = parsed.priority || parsed.date || parsed.isExam;
 
-  const dirty = !!(task.trim() || desc.trim());
+  // When adding, any text means dirty. When editing, dirty = changed from the
+  // original so cancelling an untouched edit doesn't prompt to discard.
+  const dirty = initial
+    ? (task.trim() !== (initial.task || "") ||
+       desc.trim() !== (initial.description || "") ||
+       priority !== (initial.priority || "normal") ||
+       date !== (initial.date || "") ||
+       isExam !== (initial.isExam || false))
+    : !!(task.trim() || desc.trim());
   useEffect(() => { onDirty && onDirty(dirty); }, [dirty, onDirty]);
 
   const submit = (e) => {
@@ -104,7 +112,7 @@ const NotebookForm = ({ onSubmit, onCancel, onDirty }) => {
         </label>
       </div>
       <div className="nb-form-actions">
-        <Button type="submit" variant="primary">Pin to Board</Button>
+        <Button type="submit" variant="primary">{submitLabel}</Button>
         <Button type="button" variant="ghost" className="btn-ghost-light" onClick={onCancel}>
           Cancel
         </Button>
