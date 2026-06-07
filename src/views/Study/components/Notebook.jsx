@@ -45,8 +45,7 @@ const Notebook = ({ open, onClose }) => {
       label: "Earlier",
       items: sorted.filter((t) => t.date < today),
     },
-  ].filter((g) => g.items.length);
-
+  ];
   const todays = todos.filter((t) => t.date === today);
 
   const [showAdd, setShowAdd] = useState(false);
