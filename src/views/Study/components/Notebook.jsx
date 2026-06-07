@@ -5,6 +5,7 @@ import ConfirmDialog from "../../../components/ui/ConfirmDialog";
 import TaskFormModal from "./TaskFormModal";
 import { useTodos } from "../../../context/TodoContext";
 import { dateToday } from "../../../data/mockDB";
+import { groupTasks } from "../../../domain/taskGrouping";
 
 // "2026-05-15" → "May 15". Shown on non-today rows so the day is unambiguous.
 const fmtDate = (key) => {
@@ -19,33 +20,7 @@ const Notebook = ({ open, onClose }) => {
   const { todos, toggleTodo, deleteTodo } = useTodos();
   const today = dateToday();
 
-  // Show every task — not just today's — so future (and past) tasks can be
-  // edited. Sorted by date, with completed items sinking within each day.
-  const sorted = todos
-    .slice()
-    .sort(
-      (a, b) =>
-        a.date.localeCompare(b.date) ||
-        Number(a.completed) - Number(b.completed) ||
-        b.createdAt - a.createdAt,
-    );
-  const groups = [
-    {
-      key: "today",
-      label: "Today",
-      items: sorted.filter((t) => t.date === today),
-    },
-    {
-      key: "upcoming",
-      label: "Upcoming",
-      items: sorted.filter((t) => t.date > today),
-    },
-    {
-      key: "earlier",
-      label: "Earlier",
-      items: sorted.filter((t) => t.date < today),
-    },
-  ];
+  const groups = groupTasks(todos, today);
   const todays = todos.filter((t) => t.date === today);
 
   const [showAdd, setShowAdd] = useState(false);
